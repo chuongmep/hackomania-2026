@@ -43,7 +43,7 @@ export default function Login({ isOpen, onClose, onLogin }) {
         boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-          <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '600', color: '#f1f5f9' }}>Admin Login</h2>
+          <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '600', color: '#f1f5f9' }}>Login</h2>
           <button
             onClick={onClose}
             style={{
@@ -142,20 +142,6 @@ export default function Login({ isOpen, onClose, onLogin }) {
           >
             Sign In
           </button>
-
-          <div style={{
-            marginTop: '16px',
-            padding: '12px',
-            background: 'rgba(59, 130, 246, 0.1)',
-            border: '1px solid rgba(59, 130, 246, 0.2)',
-            borderRadius: '6px',
-            fontSize: '11px',
-            color: '#94a3b8'
-          }}>
-            <strong style={{ color: '#60a5fa' }}>Demo credentials:</strong><br />
-            Email: admin@gmail.com<br />
-            Password: 12345
-          </div>
         </form>
       </div>
     </div>
