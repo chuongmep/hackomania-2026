@@ -55,7 +55,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchAlerts = async () => {
       try {
-        const response = await axios.get('/api/db/voice_infos');
+        const response = await axios.get('https://hackit-api-111308238154.asia-southeast1.run.app/db/voice_infos');
         
         if (response.data.status === 'ok' && response.data.data) {
           // Transform API data to match component structure
@@ -119,7 +119,7 @@ export default function Dashboard() {
     const fetchPersonalContacts = async () => {
       if (selectedAlert && selectedAlert.device_id) {
         try {
-          const response = await axios.get('/api/db/voice_infos');
+          const response = await axios.get('https://hackit-api-111308238154.asia-southeast1.run.app/db/voice_infos');
           console.log('Personal Contacts Response:', response.data); // Debug log
           
           // Check if response is an array directly or nested in data

@@ -110,7 +110,7 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert, alerts = [],
     
     try {
       // Call API to resolve the alert
-      const response = await axios.post(`/api/db/voice_info/resolve?device_id=${deviceId}`);
+      const response = await axios.post(`https://hackit-api-111308238154.asia-southeast1.run.app/db/voice_info/resolve?device_id=${deviceId}`);
       
       if (response.data.status === 'ok') {
         // Successfully resolved
