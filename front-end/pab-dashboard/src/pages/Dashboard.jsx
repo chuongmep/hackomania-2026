@@ -132,7 +132,7 @@ export default function Dashboard() {
         }}>
           {/* Map Section - Takes more space */}
           <div style={{ flex: "1 1 auto", minHeight: "300px", maxHeight: "50%", overflow: "hidden" }}>
-            <MapPanel />
+            <MapPanel selectedAlert={selectedAlert} />
           </div>
 
           {/* Stats Section - Compact */}

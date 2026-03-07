@@ -1,7 +1,89 @@
 
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet"
+import { useEffect } from "react"
+import L from "leaflet"
 
-export default function MapPanel(){
+// Component to update map view when alert is selected
+function MapController({ selectedAlert }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (selectedAlert && selectedAlert.coordinates) {
+      map.setView(selectedAlert.coordinates, 16, {
+        animate: true,
+        duration: 1.5
+      });
+    }
+  }, [selectedAlert, map]);
+  
+  return null;
+}
+
+// Custom marker icons
+const createCustomIcon = (color, isSelected, risk) => {
+  const size = isSelected ? 40 : 30;
+  const pulseClass = risk === 'High' ? 'pulse-marker' : '';
+  
+  return L.divIcon({
+    className: 'custom-marker',
+    html: `
+      <div class="${pulseClass}" style="
+        width: ${size}px;
+        height: ${size}px;
+        background: ${isSelected ? color : color + '80'};
+        border: 3px solid ${isSelected ? '#fff' : color};
+        border-radius: 50%;
+        box-shadow: ${isSelected ? '0 0 20px ' + color + ', 0 4px 12px rgba(0,0,0,0.5)' : '0 2px 8px rgba(0,0,0,0.3)'};
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        transition: all 0.3s ease;
+      ">
+        <div style="
+          width: ${size * 0.4}px;
+          height: ${size * 0.4}px;
+          background: white;
+          border-radius: 50%;
+          opacity: 0.9;
+        "></div>
+      </div>
+    `,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+    popupAnchor: [0, -size / 2]
+  });
+};
+
+export default function MapPanel({ selectedAlert }){
+  
+  // All alerts with their locations
+  const alerts = [
+    {
+      id: 1,
+      name: "Mr Tan Ah Kow",
+      status: "Fall Detected",
+      risk: "High",
+      color: "#3b82f6",
+      coordinates: [1.369115, 103.845436]
+    },
+    {
+      id: 2,
+      name: "Madam Lee Siew Hong",
+      status: "No Response",
+      risk: "Medium",
+      color: "#8b5cf6",
+      coordinates: [1.324, 103.93]
+    },
+    {
+      id: 3,
+      name: "Mr Kumar Ramasamy",
+      status: "Medical Alert",
+      risk: "High",
+      color: "#ec4899",
+      coordinates: [1.35, 103.94]
+    }
+  ];
 
   return(
     <div style={{
@@ -49,24 +131,84 @@ export default function MapPanel(){
         border: '1px solid rgba(71, 85, 105, 0.3)',
         boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)'
       }}>
+        <style>{`
+          .custom-marker {
+            background: transparent !important;
+            border: none !important;
+          }
+          @keyframes pulse-marker {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.15); opacity: 0.8; }
+          }
+          .pulse-marker {
+            animation: pulse-marker 2s infinite;
+          }
+          .leaflet-popup-content-wrapper {
+            background: rgba(15, 23, 42, 0.95);
+            color: white;
+            border-radius: 8px;
+            padding: 0;
+            backdrop-filter: blur(10px);
+          }
+          .leaflet-popup-content {
+            margin: 12px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+          }
+          .leaflet-popup-tip {
+            background: rgba(15, 23, 42, 0.95);
+          }
+        `}</style>
+        
         <MapContainer
-          center={[1.3521,103.8198]}
-          zoom={11}
+          center={selectedAlert ? selectedAlert.coordinates : [1.3521, 103.8198]}
+          zoom={selectedAlert ? 16 : 12}
           style={{height:"100%",width:"100%"}}
         >
-
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
-
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
-
-        <Marker position={[1.324,103.93]}>
-          <Popup>Mr Tan - Fall Detected</Popup>
-        </Marker>
-
-        <Marker position={[1.35,103.94]}>
-          <Popup>Madam Lee - No Response</Popup>
-        </Marker>
-
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+          
+          <MapController selectedAlert={selectedAlert} />
+          
+          {alerts.map((alert) => {
+            const isSelected = selectedAlert?.id === alert.id;
+            return (
+              <Marker 
+                key={alert.id}
+                position={alert.coordinates}
+                icon={createCustomIcon(alert.color, isSelected, alert.risk)}
+              >
+                <Popup>
+                  <div style={{ minWidth: '180px' }}>
+                    <div style={{
+                      fontWeight: '600',
+                      fontSize: '14px',
+                      marginBottom: '6px',
+                      color: alert.color
+                    }}>
+                      {alert.name}
+                    </div>
+                    <div style={{
+                      fontSize: '12px',
+                      color: '#cbd5e1',
+                      marginBottom: '4px'
+                    }}>
+                      {alert.status}
+                    </div>
+                    <div style={{
+                      display: 'inline-block',
+                      background: alert.risk === 'High' ? '#ef4444' : '#f59e0b',
+                      color: 'white',
+                      padding: '3px 8px',
+                      borderRadius: '4px',
+                      fontSize: '10px',
+                      fontWeight: '700'
+                    }}>
+                      {alert.risk.toUpperCase()} RISK
+                    </div>
+                  </div>
+                </Popup>
+              </Marker>
+            );
+          })}
         </MapContainer>
       </div>
 

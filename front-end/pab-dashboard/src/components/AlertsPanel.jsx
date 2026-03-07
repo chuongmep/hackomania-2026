@@ -1,4 +1,6 @@
 
+import { useState } from 'react';
+
 // Professional User Avatar Component
 function UserAvatar({ name, color, risk }) {
   const initial = name.charAt(0).toUpperCase();
@@ -88,6 +90,15 @@ function StatusBadge({ risk }) {
 }
 
 export default function AlertsPanel({ selectedAlert, onSelectAlert }){
+  const [resolvedAlerts, setResolvedAlerts] = useState([]);
+
+  const handleDispatchToggle = (alertId) => {
+    if (resolvedAlerts.includes(alertId)) {
+      setResolvedAlerts(resolvedAlerts.filter(id => id !== alertId));
+    } else {
+      setResolvedAlerts([...resolvedAlerts, alertId]);
+    }
+  };
 
   const alerts=[
     {
@@ -99,6 +110,7 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
       risk: "High",
       time: "2 mins ago",
       color: "#3b82f6",
+      coordinates: [1.369115, 103.845436],
       transcript: "Hello? Help! I've fallen in the bathroom and I can't get up. My hip hurts badly. Please send help quickly. I'm alone at home and I think I might have broken something. The pain is getting worse... I pressed my emergency button but I don't know if anyone heard me."
     },
     {
@@ -110,6 +122,7 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
       risk: "Medium",
       time: "5 mins ago",
       color: "#8b5cf6",
+      coordinates: [1.324, 103.93],
       transcript: "[No verbal response detected] *Sound of objects falling* *Heavy breathing* *Faint moaning* [System note: Motion sensor triggered in bedroom. No response to automated voice prompts. Last known position: near bedroom door.]"
     },
     {
@@ -121,6 +134,7 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
       risk: "High",
       time: "1 min ago",
       color: "#ec4899",
+      coordinates: [1.35, 103.94],
       transcript: "I'm not feeling well... chest pain... difficulty breathing. I took my heart medication but it's not helping. Please call my daughter at 9123-4567. The pain is on my left side and going down my arm. I'm sitting down now but I feel very dizzy and nauseous."
     }
   ]
@@ -276,30 +290,47 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
                     </svg>
                     Call
                   </button>
-                  <button style={{
-                    flex: 1,
-                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '7px 12px',
-                    borderRadius: '6px',
-                    fontSize: '11px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '4px',
-                    boxShadow: '0 2px 4px rgba(16, 185, 129, 0.3)',
-                    transition: 'all 0.2s'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-1px)'}
-                  onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                  <button 
+                    onClick={() => handleDispatchToggle(alert.id)}
+                    style={{
+                      flex: 1,
+                      background: resolvedAlerts.includes(alert.id) 
+                        ? 'linear-gradient(135deg, #64748b 0%, #475569 100%)' 
+                        : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                      color: '#fff',
+                      border: 'none',
+                      padding: '7px 12px',
+                      borderRadius: '6px',
+                      fontSize: '11px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '4px',
+                      boxShadow: resolvedAlerts.includes(alert.id)
+                        ? '0 2px 4px rgba(100, 116, 139, 0.3)'
+                        : '0 2px 4px rgba(16, 185, 129, 0.3)',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-1px)'}
+                    onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                   >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <path d="M9 11l3-3m0 0l3 3m-3-3v8m0-13a9 9 0 110 18 9 9 0 010-18z" />
-                    </svg>
-                    Dispatch
+                    {resolvedAlerts.includes(alert.id) ? (
+                      <>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Resolved
+                      </>
+                    ) : (
+                      <>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M9 11l3-3m0 0l3 3m-3-3v8m0-13a9 9 0 110 18 9 9 0 010-18z" />
+                        </svg>
+                        Resolve
+                      </>
+                    )}
                   </button>
                   <button style={{
                     background: 'rgba(100, 116, 139, 0.5)',
