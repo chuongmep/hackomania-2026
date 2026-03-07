@@ -3,3 +3,5 @@ pydantic~=2.13.0b2
 clickhouse-connect~=0.13.0
 openai~=2.26.0
 python-multipart
+pydantic-settings
+uvicorn[standard]
