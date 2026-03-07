@@ -8,6 +8,7 @@ from app.speech_transcriber import SpeechTranscriber
 from app.agent_score import AgentScore
 from app.voice_info_repository import VoiceInfoRepository
 from app.device_repository import DeviceRepository
+from app.emergency_contact_repository import EmergencyContactRepository
 from app.utils import resolve_priority, time_ago
 
 app = FastAPI(title=settings.app_name, version=settings.app_version, debug=settings.debug)
@@ -32,6 +33,7 @@ client = get_client()
 
 device_repository = DeviceRepository(client)
 voice_info_repo = VoiceInfoRepository(client)
+emergency_contact_repo = EmergencyContactRepository(client)
 agent_score = AgentScore(settings.open_api_key)
 
 
@@ -68,7 +70,9 @@ def get_voice_info():
     voice_infos = voice_info_repo.get_voice_infos()
     for voice_info in voice_infos:
         device = device_repository.get(voice_info["DeviceId"])
+        contacts = emergency_contact_repo.get_contacts(voice_info["DeviceId"])
         voice_info["device_info"] = device[0] if device else None
+        voice_info["contacts"] = contacts if device else None
         voice_info["time_ago"] = time_ago(voice_info["DateTimeStamp"])
     return {"status": "ok", "data": voice_infos}
 
@@ -91,10 +95,10 @@ async def detect_speech(
     return {"lang": lang, "transcript": transcript, "device_id": device_id, "score": score, "priority": priority, "matching_keyword": matching_keyword, "triage_reasoning": triage_reasoning}
 
 
-@app.put("/db/voice_info/resolve")
-def resolve_voice_info(voice_info_id: str = Form(...), resolved: bool = Form(...)):
-    voice_info_repo.update_resolved(voice_info_id, resolved)
-    return {"status": "ok", "voice_info_id": voice_info_id, "resolved": resolved}
+@app.post("/db/voice_info/resolve")
+def resolve_voice_info(device_id: str = Query(...)):
+    voice_info_repo.delete(device_id)
+    return {"status": "ok", "resolved": True}
 
 
 @app.get("/scoring-config")

@@ -39,8 +39,8 @@ SYSTEM_PROMPT = (
     "\n"
     "## Rules\n"
     "\n"
-    "- Only use keywords and conditions that are explicitly present in the scoring "
-    "tables. Do not invent new ones.\n"
+    "- Identify and map keywords/conditions that are present/similar to the ones present in the scoring "
+    "tables.\n"
     "- Match keywords case-insensitively. Accept close morphological variants "
     '(e.g. "bleeding" matches "bleed").\n'
     "- If nothing in the transcript matches a scoring table, that sub-score is 0.\n"
