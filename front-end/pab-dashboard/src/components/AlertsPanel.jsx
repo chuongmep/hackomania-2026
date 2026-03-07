@@ -113,6 +113,7 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
     {
       id: 1,
       name: "Mr Tan Ah Kow",
+      device_id: "PAB-00083912",
       age: 78,
       location: "Blk 123, Ang Mo Kio Ave 3, #05-45",
       status: "Fall Detected",
@@ -125,6 +126,7 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
     {
       id: 2,
       name: "Madam Lee Siew Hong",
+      device_id: "PAB-00084201",
       age: 82,
       location: "Blk 456, Bedok North St 2, #12-88",
       status: "No Response",
@@ -137,6 +139,7 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
     {
       id: 3,
       name: "Mr Kumar Ramasamy",
+      device_id: "PAB-00085476",
       age: 75,
       location: "Blk 789, Tampines Ave 5, #08-22",
       status: "Medical Alert",
@@ -237,6 +240,9 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '6px'}}>
                   <div>
                     <h4 style={{margin: '0 0 3px 0', fontSize: '15px'}}>{alert.name}</h4>
+                    <p style={{margin: '0 0 2px 0', fontSize: '11px', color: '#64748b', fontFamily: 'monospace', letterSpacing: '0.5px'}}>
+                      {alert.device_id}
+                    </p>
                     <p style={{margin: 0, fontSize: '12px', color: '#94a3b8'}}>
                       Age: {alert.age} • {alert.time}
                     </p>
