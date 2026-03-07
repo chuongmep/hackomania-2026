@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from clickhouse_connect.driver import Client
 
 
@@ -26,8 +28,8 @@ class VoiceInfoRepository:
 
         self.client.insert(
             "VoiceInfo",
-            [[device_id, base64_audio, transcript, lang, score, priority]],
-            column_names=["DeviceId", "Base64", "Transcript", "Language", "RiskScore", "Priority"],
+            [[device_id, base64_audio, transcript, lang, score, priority, datetime.now(timezone.utc)]],
+            column_names=["DeviceId", "Base64", "Transcript", "Language", "RiskScore", "Priority", "DateTimeStamp"],
         )
 
     def _query_as_dicts(self, query: str) -> list[dict]:

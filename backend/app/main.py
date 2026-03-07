@@ -7,7 +7,8 @@ from app.schemas import HealthResponse, MessageResponse
 from app.speech_transcriber import SpeechTranscriber
 from app.agent_score import AgentScore
 from app.voice_info_repository import VoiceInfoRepository
-from app.utils import resolve_priority
+from app.device_repository import DeviceRepository
+from app.utils import resolve_priority, time_ago
 
 app = FastAPI(title=settings.app_name, version=settings.app_version, debug=settings.debug)
 
@@ -28,6 +29,8 @@ app.add_middleware(
 
 speech_transcriber = SpeechTranscriber(settings.open_api_key)
 client = get_client()
+
+device_repository = DeviceRepository(client)
 voice_info_repo = VoiceInfoRepository(client)
 agent_score = AgentScore(settings.open_api_key)
 
@@ -62,8 +65,12 @@ def get_voice_info(device_id: str = Query(...), is_resolved: bool = Query(...)):
 
 @app.get("/db/voice_infos")
 def get_voice_info():
-    result = voice_info_repo.get_voice_infos()
-    return {"status": "ok", "data": result}
+    voice_infos = voice_info_repo.get_voice_infos()
+    for voice_info in voice_infos:
+        device = device_repository.get(voice_info["DeviceId"])
+        voice_info["device_info"] = device[0] if device else None
+        voice_info["time_ago"] = time_ago(voice_info["DateTimeStamp"])
+    return {"status": "ok", "data": voice_infos}
 
 
 @app.post("/detect")
