@@ -1,5 +1,5 @@
 import base64
-from fastapi import FastAPI, Form, UploadFile, File
+from fastapi import FastAPI, Form, Query, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.db import get_client
@@ -11,10 +11,16 @@ from app.utils import resolve_priority
 
 app = FastAPI(title=settings.app_name, version=settings.app_version, debug=settings.debug)
 
+origins = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://hackomania-2026.vercel.app",
+]
+
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
@@ -43,13 +49,13 @@ def db_ping():
 
 
 @app.get("/db/emergency_contacts")
-def get_emergency_contacts(device_id: str = Form(...)):
+def get_emergency_contacts(device_id: str = Query(...)):
     result = voice_info_repo.get_emergency_contacts(device_id)
     return {"status": "ok", "data": result}
 
 
 @app.get("/db/voice_info")
-def get_voice_info(device_id: str = Form(...), is_resolved: bool = Form(...)):
+def get_voice_info(device_id: str = Query(...), is_resolved: bool = Query(...)):
     result = voice_info_repo.get_voice_info(device_id, is_resolved)
     return {"status": "ok", "data": result}
 
@@ -73,7 +79,7 @@ async def detect_speech(
     lang, score, matching_keyword = agent_score.calculate(transcript, scoring_config)
     priority = resolve_priority(priorities, score)
 
-    voice_info_repo.insert(device_id, audio_base64, transcript, lang, score, priority)
+    voice_info_repo.upsert(device_id, audio_base64, transcript, lang, score, priority)
 
     return {"lang": lang, "transcript": transcript, "device_id": device_id, "score": score, "priority": priority,"matching_keyword": matching_keyword}
 
