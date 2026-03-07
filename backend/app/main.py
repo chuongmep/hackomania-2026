@@ -83,12 +83,12 @@ async def detect_speech(
     transcript = await speech_transcriber.transcribe((file.filename, audio_bytes, file.content_type))
     scoring_config = voice_info_repo.get_scoring_config()
     priorities = voice_info_repo.get_priorities()
-    lang, score, matching_keyword = agent_score.calculate(transcript, scoring_config)
+    lang, score, matching_keyword, triage_reasoning = agent_score.calculate(transcript, scoring_config)
     priority = resolve_priority(priorities, score)
 
-    voice_info_repo.upsert(device_id, audio_base64, transcript, lang, score, priority)
+    voice_info_repo.upsert(device_id, audio_base64, transcript, lang, score, priority, triage_reasoning)
 
-    return {"lang": lang, "transcript": transcript, "device_id": device_id, "score": score, "priority": priority,"matching_keyword": matching_keyword}
+    return {"lang": lang, "transcript": transcript, "device_id": device_id, "score": score, "priority": priority, "matching_keyword": matching_keyword, "triage_reasoning": triage_reasoning}
 
 
 @app.put("/db/voice_info/resolve")

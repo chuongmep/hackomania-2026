@@ -45,7 +45,12 @@ SYSTEM_PROMPT = (
     '(e.g. "bleeding" matches "bleed").\n'
     "- If nothing in the transcript matches a scoring table, that sub-score is 0.\n"
     "- Return the final weighted RiskScore as a single number, rounded to two "
-    "decimal places."
+    "decimal places.\n"
+    "- Return a `triage_reasoning` field: a concise 1-2 sentence summary of the "
+    "key medical or distress indicators found in the transcript, explaining why "
+    "the caller needs attention (e.g. \"Caller reports severe chest pain and "
+    "difficulty breathing, indicating a possible cardiac event.\"). "
+    "If nothing significant is found, return \"No significant distress indicators detected.\""
 )
 
 
@@ -53,6 +58,7 @@ class RiskScore(BaseModel):
     language: str
     score: float
     matching_keyword: list[str]
+    triage_reasoning: str
 
 
 class AgentScore:
@@ -75,4 +81,4 @@ class AgentScore:
         )
 
         output = response.output_parsed
-        return output.language, output.score, output.matching_keyword
+        return output.language, output.score, output.matching_keyword, output.triage_reasoning
