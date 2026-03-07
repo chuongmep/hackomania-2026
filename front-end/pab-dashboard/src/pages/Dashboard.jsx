@@ -3,6 +3,7 @@ import { useState } from "react"
 import AlertsPanel from "../components/AlertsPanel"
 import MapPanel from "../components/MapPanel"
 import SummaryPanel from "../components/SummaryPanel"
+import ContactList from "../components/ContactList"
 import StatCards from "../components/StatCards"
 
 // Professional Logo Icon
@@ -125,23 +126,32 @@ export default function Dashboard() {
         <div style={{
           display: "flex",
           flexDirection: "column",
-          gap: "15px",
+          gap: "12px",
           minHeight: 0,
           overflow: "hidden"
         }}>
-          {/* Map Section */}
-          <div style={{ flex: "1 1 60%", minHeight: 0 }}>
+          {/* Map Section - Takes more space */}
+          <div style={{ flex: "1 1 auto", minHeight: "300px", maxHeight: "50%", overflow: "hidden" }}>
             <MapPanel />
           </div>
 
-          {/* Stats Section */}
+          {/* Stats Section - Compact */}
           <div style={{ flex: "0 0 auto" }}>
             <StatCards />
           </div>
 
-          {/* Summary Section */}
-          <div style={{ flex: "0 0 auto" }}>
+          {/* Summary & Contact Section - Two Columns with controlled height */}
+          <div style={{ 
+            flex: "1 1 auto",
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "12px",
+            minHeight: 0,
+            maxHeight: "280px",
+            overflow: "hidden"
+          }}>
             <SummaryPanel selectedAlert={selectedAlert} />
+            <ContactList selectedAlert={selectedAlert} />
           </div>
         </div>
       </div>
