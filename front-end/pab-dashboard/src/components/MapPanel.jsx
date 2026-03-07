@@ -76,7 +76,6 @@ export default function MapPanel({ selectedAlert, alerts = [] }){
   return(
     <div style={{
       background: "rgba(30, 41, 59, 0.6)",
-      padding: "14px",
       borderRadius: "10px",
       height: "100%",
       display: "flex",

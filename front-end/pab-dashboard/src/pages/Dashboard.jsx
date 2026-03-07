@@ -354,7 +354,7 @@ export default function Dashboard() {
             gridTemplateColumns: "calc(50% + 14px) calc(50% - 14px)",
             gap: "12px",
             flex: "0 0 auto",
-            minHeight: "280px"
+            height: "320px"
           }}>
             {/* Map Section - Left half */}
             <div className="map-section" style={{ 

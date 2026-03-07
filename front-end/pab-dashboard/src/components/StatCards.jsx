@@ -57,18 +57,19 @@ export default function StatCards({ alerts = [] }){
   return(
     <div style={{
       background: "rgba(30, 41, 59, 0.6)",
-      padding: "10px",
       borderRadius: "10px",
       backdropFilter: "blur(10px)",
       border: "1px solid rgba(71, 85, 105, 0.5)",
       height: "100%",
-      overflow: "hidden"
+      display: "flex",
+      flexDirection: "column"
     }}>
     <div className="stat-cards" style={{
       display:"grid",
       gridTemplateColumns:"repeat(2, 1fr)",
       gap:"6px",
-      height: "100%"
+      flex: "1",
+      gridAutoRows: "1fr"
     }}>
       <style>{`
         @media (max-width: 1200px) {
