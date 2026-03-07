@@ -79,9 +79,9 @@ async def detect_speech(
 
 
 @app.put("/db/voice_info/resolve")
-def resolve_voice_info(device_id: str = Form(...), resolved: bool = Form(...)):
-    voice_info_repo.update_resolved(device_id, resolved)
-    return {"status": "ok", "device_id": device_id, "resolved": resolved}
+def resolve_voice_info(voice_info_id: str = Form(...), resolved: bool = Form(...)):
+    voice_info_repo.update_resolved(voice_info_id, resolved)
+    return {"status": "ok", "voice_info_id": voice_info_id, "resolved": resolved}
 
 
 @app.get("/scoring-config")

@@ -46,9 +46,9 @@ class VoiceInfoRepository:
         result = self._query_as_dicts(f"SELECT * FROM VoiceInfo WHERE Resolved == 'false'")
         return result
 
-    def update_resolved(self, device_id: str, resolved: bool):
+    def update_resolved(self, voice_info_id: str, resolved: bool):
         self.client.command(
             "ALTER TABLE VoiceInfo UPDATE Resolved = {resolved:String} "
-            "WHERE DeviceId = {device_id:String}",
-            parameters={"resolved": str(resolved).lower(), "device_id": device_id},
+            "WHERE Id = {voice_info_id:String}",
+            parameters={"resolved": str(resolved).lower(), "voice_info_id": voice_info_id},
         )
