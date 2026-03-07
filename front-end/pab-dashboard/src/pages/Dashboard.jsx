@@ -101,6 +101,16 @@ export default function Dashboard() {
     }
   }, [isLoggedIn]);
 
+  // Update selected alert when alerts refresh
+  useEffect(() => {
+    if (selectedAlert && alerts.length > 0) {
+      const updatedAlert = alerts.find(alert => alert.id === selectedAlert.id);
+      if (updatedAlert) {
+        setSelectedAlert(updatedAlert);
+      }
+    }
+  }, [alerts]);
+
   const handleLogin = (email) => {
     setIsLoggedIn(true);
     setUserEmail(email);
