@@ -8,9 +8,13 @@ function App() {
   const [recordingStatus, setRecordingStatus] = useState('idle'); // idle, recording, processing, success, error
   const [statusMessage, setStatusMessage] = useState('');
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isHolding, setIsHolding] = useState(false);
+  const [holdProgress, setHoldProgress] = useState(0);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const appRef = useRef(null);
+  const holdTimerRef = useRef(null);
+  const holdProgressIntervalRef = useRef(null);
 
   // API endpoint - update this with your backend URL
   const API_ENDPOINT = process.env.REACT_APP_API_URL || 'https://hackit-api-111308238154.asia-southeast1.run.app/detect';
@@ -160,6 +164,68 @@ function App() {
     }
   };
 
+  const handleButtonDown = (e) => {
+    // Prevent triggering on right-click or disabled state
+    if (recordingStatus === 'processing' || isRecording) return;
+    
+    e.preventDefault();
+    setIsHolding(true);
+    setHoldProgress(0);
+    
+    // Start progress animation
+    holdProgressIntervalRef.current = setInterval(() => {
+      setHoldProgress((prev) => {
+        if (prev >= 100) {
+          return 100;
+        }
+        return prev + 2; // 100 / 50 = 2% per interval (5000ms / 100ms intervals)
+      });
+    }, 100);
+    
+    // Set timer for 5 seconds
+    holdTimerRef.current = setTimeout(() => {
+      triggerHotlineCall();
+    }, 5000);
+  };
+
+  const handleButtonUp = () => {
+    if (isHolding && holdProgress < 100) {
+      // Released before 5 seconds - trigger normal emergency alert
+      clearTimeout(holdTimerRef.current);
+      clearInterval(holdProgressIntervalRef.current);
+      setIsHolding(false);
+      setHoldProgress(0);
+      handleButtonPress();
+    } else if (holdProgress >= 100) {
+      // Already triggered hotline
+      clearTimeout(holdTimerRef.current);
+      clearInterval(holdProgressIntervalRef.current);
+      setIsHolding(false);
+      setHoldProgress(0);
+    }
+  };
+
+  const triggerHotlineCall = () => {
+    clearInterval(holdProgressIntervalRef.current);
+    setIsHolding(false);
+    setHoldProgress(0);
+    
+    setRecordingStatus('processing');
+    setStatusMessage('🔗 Connecting to Emergency Hotline...');
+    
+    // Simulate hotline connection
+    setTimeout(() => {
+      setRecordingStatus('success');
+      setStatusMessage('📞 Connected! Hotline Support Ready.');
+      
+      // Simulate call duration then reset
+      setTimeout(() => {
+        setRecordingStatus('idle');
+        setStatusMessage('');
+      }, 5000);
+    }, 2000);
+  };
+
   const toggleFullscreen = async () => {
     try {
       if (!document.fullscreenElement) {
@@ -204,6 +270,10 @@ function App() {
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
       document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
       document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+      
+      // Cleanup timers on unmount
+      if (holdTimerRef.current) clearTimeout(holdTimerRef.current);
+      if (holdProgressIntervalRef.current) clearInterval(holdProgressIntervalRef.current);
     };
   }, []);
 
@@ -232,11 +302,28 @@ function App() {
         
         <div className="button-container">
           <button
-            className={`record-button ${isRecording ? 'recording' : ''} ${recordingStatus}`}
-            onClick={handleButtonPress}
+            className={`record-button ${isRecording ? 'recording' : ''} ${recordingStatus} ${isHolding ? 'holding' : ''}`}
+            onClick={(e) => {
+              // Only trigger click if not holding
+              if (!isHolding && holdProgress === 0) {
+                handleButtonPress();
+              }
+            }}
+            onMouseDown={handleButtonDown}
+            onMouseUp={handleButtonUp}
+            onMouseLeave={handleButtonUp}
+            onTouchStart={handleButtonDown}
+            onTouchEnd={handleButtonUp}
             disabled={recordingStatus === 'processing'}
             aria-label="Emergency alert button"
           >
+            {/* Hold progress indicator */}
+            {isHolding && (
+              <div className="hold-progress" style={{
+                '--progress': `${holdProgress}%`
+              }} />
+            )}
+            
             <div className="button-inner">
               {recordingStatus === 'processing' ? (
                 <div className="spinner" />
@@ -267,11 +354,20 @@ function App() {
 
         <div className="instructions">
           {!isRecording && recordingStatus !== 'processing' 
-            ? 'PRESS TO ALERT HELP' 
+            ? isHolding 
+              ? `HOLD ${Math.floor((100 - holdProgress) / 20)}s FOR HOTLINE...`
+              : 'PRESS TO ALERT • HOLD 5s FOR HOTLINE'
             : isRecording 
             ? 'RECORDING YOUR MESSAGE...'
             : 'SENDING ALERT...'}
         </div>
+        
+        {!isRecording && recordingStatus === 'idle' && (
+          <div className="hint-text">
+            Quick press: Send emergency alert with recording<br />
+            Long press (5s): Connect to emergency hotline
+          </div>
+        )}
       </div>
     </div>
   );
