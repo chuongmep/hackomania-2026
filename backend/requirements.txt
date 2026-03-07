@@ -3,4 +3,3 @@ uvicorn[standard]==0.35.0
 pydantic==2.11.7
 pydantic-settings==2.10.1
 clickhouse-connect==0.8.13
-python-multipart==0.0.9
