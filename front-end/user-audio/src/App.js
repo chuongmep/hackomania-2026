@@ -18,8 +18,9 @@ function App() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       
-      // Create MediaRecorder instance
-      const mediaRecorder = new MediaRecorder(stream);
+      // Create MediaRecorder instance with audio/webm codec
+      const options = { mimeType: 'audio/webm' };
+      const mediaRecorder = new MediaRecorder(stream, options);
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
 
@@ -30,7 +31,7 @@ function App() {
       };
 
       mediaRecorder.onstop = async () => {
-        // Create audio blob
+        // Create audio blob from recorded chunks
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
         
         // Stop all tracks
@@ -66,7 +67,22 @@ function App() {
     try {
       const formData = new FormData();
       formData.append('device_id', DEVICE_ID);
-      formData.append('file', audioBlob, 'recording.webm');
+      
+      // Create a file with proper name and type
+      const timestamp = Date.now();
+      const audioFile = new File([audioBlob], `recording-${timestamp}.webm`, { 
+        type: 'audio/webm',
+        lastModified: timestamp
+      });
+      
+      formData.append('file', audioFile);
+
+      console.log('Sending audio to backend...', {
+        endpoint: API_ENDPOINT,
+        device_id: DEVICE_ID,
+        fileSize: audioBlob.size,
+        fileType: audioBlob.type
+      });
 
       const response = await axios.post(API_ENDPOINT, formData, {
         headers: {
@@ -85,6 +101,11 @@ function App() {
       }, 4000);
     } catch (error) {
       console.error('Error uploading audio:', error);
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
       setRecordingStatus('error');
       setStatusMessage('Alert failed. Press button again.');
       
