@@ -181,17 +181,10 @@ export default function MapPanel({ selectedAlert }){
                     <div style={{
                       fontWeight: '600',
                       fontSize: '14px',
-                      marginBottom: '6px',
+                      marginBottom: '8px',
                       color: alert.color
                     }}>
                       {alert.name}
-                    </div>
-                    <div style={{
-                      fontSize: '12px',
-                      color: '#cbd5e1',
-                      marginBottom: '4px'
-                    }}>
-                      {alert.status}
                     </div>
                     <div style={{
                       display: 'inline-block',

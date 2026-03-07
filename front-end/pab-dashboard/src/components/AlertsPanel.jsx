@@ -254,16 +254,6 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
                   marginTop: '8px',
                   border: '1px solid rgba(71, 85, 105, 0.3)'
                 }}>
-                  <div style={{display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px'}}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5">
-                      <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                      <line x1="12" y1="9" x2="12" y2="13" />
-                      <line x1="12" y1="17" x2="12.01" y2="17" />
-                    </svg>
-                    <p style={{margin: 0, fontSize: '13px', fontWeight: '600', color: '#f1f5f9'}}>
-                      {alert.status}
-                    </p>
-                  </div>
                   <div style={{display: 'flex', alignItems: 'start', gap: '6px'}}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" style={{marginTop: '2px', flexShrink: 0}}>
                       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />

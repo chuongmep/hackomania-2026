@@ -58,7 +58,7 @@ export default function SummaryPanel({ selectedAlert }){
       </div>
 
       {/* User Info */}
-      <div style={{display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px', fontSize: '12px', marginBottom: '10px'}}>
+      <div style={{display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px', fontSize: '12px', marginBottom: '10px'}}>
         <div style={{
           background: 'rgba(51, 65, 85, 0.5)',
           padding: '8px',
@@ -88,20 +88,6 @@ export default function SummaryPanel({ selectedAlert }){
             Address
           </div>
           <div style={{fontWeight: '600', fontSize: '12px', color: '#e2e8f0'}}>{selectedAlert.location.split(',')[0]}</div>
-        </div>
-        <div style={{
-          background: 'rgba(51, 65, 85, 0.5)',
-          padding: '8px',
-          borderRadius: '6px',
-          border: '1px solid rgba(71, 85, 105, 0.3)'
-        }}>
-          <div style={{color: '#94a3b8', marginBottom: '4px', fontSize: '11px', display: 'flex', alignItems: 'center', gap: '4px'}}>
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-            </svg>
-            Status
-          </div>
-          <div style={{fontWeight: '600', fontSize: '12px', color: riskColors[selectedAlert.risk]}}>{selectedAlert.status}</div>
         </div>
       </div>
 
