@@ -91,6 +91,30 @@ export default function Dashboard() {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }
         }
+        
+        /* Responsive Layout */
+        @media (max-width: 1400px) {
+          .dashboard-main-content {
+            grid-template-columns: 320px 1fr !important;
+          }
+        }
+        @media (max-width: 1200px) {
+          .dashboard-main-content {
+            grid-template-columns: 1fr !important;
+          }
+          .map-stats-row {
+            grid-template-columns: 1fr !important;
+          }
+          .summary-contact-section {
+            grid-template-columns: 1fr !important;
+          }
+        }
+        @media (max-width: 768px) {
+          .dashboard-header {
+            flex-wrap: wrap !important;
+            gap: 10px !important;
+          }
+        }
       `}</style>
       
       {/* Header */}
@@ -189,7 +213,7 @@ export default function Dashboard() {
       </div>
 
       {/* Main Content */}
-      <div style={{
+      <div className="dashboard-main-content" style={{
         flex: 1,
         display: "grid",
         gridTemplateColumns: "380px 1fr",
@@ -207,31 +231,46 @@ export default function Dashboard() {
         </div>
 
         {/* Right Column - Map, Stats, Summary */}
-        <div style={{
+        <div className="dashboard-right-column" style={{
           display: "flex",
           flexDirection: "column",
           gap: "12px",
           minHeight: 0,
           overflow: "hidden"
         }}>
-          {/* Map Section - Takes more space */}
-          <div style={{ flex: "1 1 auto", minHeight: "300px", maxHeight: "50%", overflow: "hidden" }}>
-            <MapPanel selectedAlert={selectedAlert} />
-          </div>
+          {/* Map & Stats Row - Side by side */}
+          <div className="map-stats-row" style={{ 
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "12px",
+            flex: "0 0 auto",
+            minHeight: "280px"
+          }}>
+            {/* Map Section - Left half */}
+            <div className="map-section" style={{ 
+              height: "100%",
+              overflow: "hidden" 
+            }}>
+              <MapPanel selectedAlert={selectedAlert} />
+            </div>
 
-          {/* Stats Section - Compact */}
-          <div style={{ flex: "0 0 auto" }}>
-            <StatCards />
+            {/* Stats Section - Right half */}
+            <div className="stats-section" style={{ 
+              height: "100%",
+              overflow: "hidden"
+            }}>
+              <StatCards />
+            </div>
           </div>
 
           {/* Summary & Contact Section - Two Columns with controlled height */}
-          <div style={{ 
+          <div className="summary-contact-section" style={{ 
             flex: "1 1 auto",
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
             gap: "12px",
-            minHeight: 0,
-            maxHeight: "280px",
+            minHeight: "280px",
+            maxHeight: "450px",
             overflow: "hidden"
           }}>
             <SummaryPanel selectedAlert={selectedAlert} />

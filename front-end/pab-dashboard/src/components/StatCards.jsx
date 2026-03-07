@@ -50,85 +50,122 @@ export default function StatCards(){
   ]
 
   return(
-    <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:"10px"}}>
+    <div className="stat-cards" style={{
+      display:"grid",
+      gridTemplateColumns:"repeat(2, 1fr)",
+      gap:"10px",
+      height: "100%"
+    }}>
+      <style>{`
+        @media (max-width: 1200px) {
+          .stat-cards {
+            grid-template-columns: 1fr !important;
+          }
+        }
+        @keyframes shimmer {
+          0% { background-position: -200% center; }
+          100% { background-position: 200% center; }
+        }
+      `}</style>
 
       {stats.map((s,i)=>(
         <div key={i} style={{
           background: s.bgGradient,
-          padding: "12px",
-          borderRadius: "10px",
-          border: `1px solid ${s.color}40`,
+          padding: "16px 18px",
+          borderRadius: "12px",
+          border: `1.5px solid ${s.color}50`,
           backdropFilter: "blur(10px)",
           position: "relative",
           overflow: "hidden",
-          transition: "all 0.3s ease"
+          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+          boxShadow: `0 2px 8px ${s.color}15`
         }}
         onMouseOver={(e) => {
-          e.currentTarget.style.transform = 'translateY(-2px)';
-          e.currentTarget.style.boxShadow = `0 8px 16px ${s.color}30`;
+          e.currentTarget.style.transform = 'translateY(-3px) scale(1.01)';
+          e.currentTarget.style.boxShadow = `0 12px 24px ${s.color}35`;
+          e.currentTarget.style.borderColor = `${s.color}80`;
         }}
         onMouseOut={(e) => {
-          e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = 'none';
+          e.currentTarget.style.transform = 'translateY(0) scale(1)';
+          e.currentTarget.style.boxShadow = `0 2px 8px ${s.color}15`;
+          e.currentTarget.style.borderColor = `${s.color}50`;
         }}
         >
           {/* Background Icon */}
           <div style={{
             position: 'absolute',
-            right: '-10px',
-            top: '-10px',
+            right: '-15px',
+            top: '-15px',
             width: '80px',
             height: '80px',
-            opacity: '0.1',
-            color: s.color
+            opacity: '0.06',
+            color: s.color,
+            transform: 'rotate(-15deg)'
           }}>
             {s.icon}
           </div>
           
+          {/* Accent Line */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '3px',
+            background: `linear-gradient(90deg, ${s.color}00 0%, ${s.color} 50%, ${s.color}00 100%)`,
+            opacity: 0.6
+          }} />
+          
           <div style={{position: 'relative', zIndex: 1}}>
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '8px'}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '10px'}}>
               <div style={{
-                width: '32px',
-                height: '32px',
+                width: '36px',
+                height: '36px',
                 borderRadius: '8px',
-                background: `${s.color}20`,
+                background: `${s.color}25`,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: s.color
+                color: s.color,
+                boxShadow: `0 4px 8px ${s.color}20`,
+                border: `1px solid ${s.color}30`
               }}>
-                <div style={{width: '18px', height: '18px'}}>
+                <div style={{width: '20px', height: '20px'}}>
                   {s.icon}
                 </div>
               </div>
               <span style={{
-                fontSize: '10px',
+                fontSize: '11px',
                 fontWeight: '700',
                 color: s.color,
-                background: `${s.color}20`,
-                padding: '3px 6px',
-                borderRadius: '4px'
+                background: `${s.color}25`,
+                padding: '4px 8px',
+                borderRadius: '6px',
+                border: `1px solid ${s.color}30`,
+                letterSpacing: '0.3px'
               }}>
                 {s.trend}
               </span>
             </div>
             
             <h2 style={{
-              margin: '0 0 4px 0',
-              fontSize: '28px',
+              margin: '0 0 6px 0',
+              fontSize: '32px',
               fontWeight: '700',
               color: s.color,
-              lineHeight: '1'
+              lineHeight: '1',
+              textShadow: `0 2px 8px ${s.color}30`
             }}>
               {s.value}
             </h2>
             
             <p style={{
               margin: 0,
-              fontSize: '11px',
+              fontSize: '13px',
               color: '#94a3b8',
-              fontWeight: '500',
-              letterSpacing: '0.3px'
+              fontWeight: '600',
+              letterSpacing: '0.3px',
+              lineHeight: '1.3'
             }}>
               {s.label}
             </p>
