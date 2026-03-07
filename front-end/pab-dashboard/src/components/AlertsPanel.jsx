@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import axios from 'axios';
 
 // Professional User Avatar Component
 function UserAvatar({ name, color, risk }) {
@@ -92,12 +93,39 @@ function StatusBadge({ risk }) {
 export default function AlertsPanel({ selectedAlert, onSelectAlert, alerts = [], loading = false }){
   const [resolvedAlerts, setResolvedAlerts] = useState([]);
   const [attendedAlerts, setAttendedAlerts] = useState([]);
+  const [resolvingAlerts, setResolvingAlerts] = useState([]);
 
-  const handleDispatchToggle = (alertId) => {
+  const handleDispatchToggle = async (alert) => {
+    const alertId = alert.id;
+    const deviceId = alert.device_id;
+    
+    // Check if already resolved
     if (resolvedAlerts.includes(alertId)) {
       setResolvedAlerts(resolvedAlerts.filter(id => id !== alertId));
-    } else {
-      setResolvedAlerts([...resolvedAlerts, alertId]);
+      return;
+    }
+    
+    // Mark as resolving
+    setResolvingAlerts([...resolvingAlerts, alertId]);
+    
+    try {
+      // Call API to resolve the alert
+      const response = await axios.post(`/api/db/voice_info/resolve?device_id=${deviceId}`);
+      
+      if (response.data.status === 'ok') {
+        // Successfully resolved
+        setResolvedAlerts([...resolvedAlerts, alertId]);
+        console.log(`Alert ${deviceId} resolved successfully`);
+      } else {
+        console.error('Failed to resolve alert:', response.data);
+        alert('Failed to resolve alert. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error resolving alert:', error);
+      alert('Error resolving alert. Please check your connection.');
+    } finally {
+      // Remove from resolving state
+      setResolvingAlerts(resolvingAlerts.filter(id => id !== alertId));
     }
   };
 
@@ -157,6 +185,10 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert, alerts = [],
         @keyframes pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.6; }
+        }
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
         .alert-card {
           transition: all 0.3s ease;
@@ -342,12 +374,15 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert, alerts = [],
                   <button 
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDispatchToggle(alert.id);
+                      handleDispatchToggle(alert);
                     }}
+                    disabled={resolvingAlerts.includes(alert.id)}
                     style={{
                       flex: 1,
                       background: resolvedAlerts.includes(alert.id) 
                         ? 'linear-gradient(135deg, #64748b 0%, #475569 100%)' 
+                        : resolvingAlerts.includes(alert.id)
+                        ? 'linear-gradient(135deg, #94a3b8 0%, #64748b 100%)'
                         : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                       color: '#fff',
                       border: 'none',
@@ -355,7 +390,7 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert, alerts = [],
                       borderRadius: '6px',
                       fontSize: '11px',
                       fontWeight: '600',
-                      cursor: 'pointer',
+                      cursor: resolvingAlerts.includes(alert.id) ? 'wait' : 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -363,12 +398,20 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert, alerts = [],
                       boxShadow: resolvedAlerts.includes(alert.id)
                         ? '0 2px 4px rgba(100, 116, 139, 0.3)'
                         : '0 2px 4px rgba(16, 185, 129, 0.3)',
-                      transition: 'all 0.2s'
+                      transition: 'all 0.2s',
+                      opacity: resolvingAlerts.includes(alert.id) ? 0.7 : 1
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-1px)'}
+                    onMouseOver={(e) => !resolvingAlerts.includes(alert.id) && (e.currentTarget.style.transform = 'translateY(-1px)')}
                     onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                   >
-                    {resolvedAlerts.includes(alert.id) ? (
+                    {resolvingAlerts.includes(alert.id) ? (
+                      <>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{animation: 'spin 1s linear infinite'}}>
+                          <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
+                        </svg>
+                        Resolving...
+                      </>
+                    ) : resolvedAlerts.includes(alert.id) ? (
                       <>
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                           <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />

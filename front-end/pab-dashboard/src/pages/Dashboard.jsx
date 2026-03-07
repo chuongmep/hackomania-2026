@@ -58,6 +58,7 @@ export default function Dashboard() {
         
         if (response.data.status === 'ok' && response.data.data) {
           // Transform API data to match component structure
+          console.log('Raw API Response:', response.data.data); // Debug log
           const transformedAlerts = response.data.data
             .filter(item => item.device_info !== null && item.device_info !== undefined)
             .map((item, index) => ({
