@@ -1,6 +1,20 @@
 # Hackomania-2026
 
-Hackomania 2026 HackIT Team
+Hackomania 2026 HackIT Team 24h Hackathon project: Emergency Response System with PAB Dashboard, User Audio Recorder.
+
+- Chuong:  chuongpqvn@gmail.com 
+- Tuan Le: leducanhtuan3006@gmail.com 
+- Samuel: SamLee347@hotmail.com 
+- Yan: chooyanprogramming@gmail.com
+
+Live Demo :
+
+- PAB Dashboard: https://hackomania-2026.vercel.app/
+- User Audio: https://hackomania-2026.vercel.app/user.html
+
+Presentation: 
+- [PowerPoint Slides](https://docs.google.com/presentation/d/1t6mOE3n6bdeLQVjkHmwJMtGJtA2nQcDHQ6C2UskmWic/edit?usp=sharing)
+- [Lucidchart Diagram](https://lucid.app/lucidchart/1366c763-caef-450c-9534-fe6c66a39e98/edit?view_items=IokUlqxaL2PuV1AHdFKDwjptYKA%3D&page=0_0&invitationId=inv_f80f99aa-ecd0-4dfb-a001-e668f696a970)
 
 ## 📋 Project Overview
 
