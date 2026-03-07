@@ -1,4 +1,5 @@
-# hackomania-2026
+# Hackomania-2026
+
 Hackomania 2026 HackIT Team
 
 ## 📋 Project Overview
@@ -7,6 +8,8 @@ This project consists of a comprehensive emergency response system with:
 - **PAB Dashboard**: Real-time monitoring dashboard for emergency alerts
 - **User Audio Recorder**: Voice recording interface for emergency reports
 - **Backend API**: Python FastAPI backend for data management
+
+![Demo Screenshot](./docs/demo.png)
 
 ## Sytem Architecture
 
@@ -75,3 +78,12 @@ Run `./deploy.sh` to build both apps into a single `dist-combined/` directory.
 ## 📝 License
 
 See [LICENSE](LICENSE) for details.
+
+## Many Thanks
+
+- https://hackomania.geekshacking.com/
+- All our teammates for their hard work and creativity!
+- The Hackomania organizers for hosting this amazing event!
+- Our friends and family for their support and encouragement!
+- And of course, the users who will benefit from our system in real emergencies! 🙌
+- Many thanks for all responses and feedback from the judges and mentors! We really appreciate it and will use it to improve our project further! 😊
