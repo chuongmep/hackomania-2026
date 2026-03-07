@@ -1,5 +1,5 @@
-fastapi==0.116.1
-uvicorn[standard]==0.35.0
-pydantic==2.11.7
-pydantic-settings==2.10.1
-clickhouse-connect==0.8.13
+fastapi~=0.135.1
+pydantic~=2.13.0b2
+clickhouse-connect~=0.13.0
+openai~=2.26.0
+python-multipart

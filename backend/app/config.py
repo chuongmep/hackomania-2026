@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     ch_password: str = ""
     ch_database: str = "default"
     ch_secure: bool = True
+    open_api_key: str = Field(default="apikey", validation_alias="OPEN_API_KEY")
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
