@@ -36,6 +36,18 @@ def get_emergency_contacts(device_id: str = Form(...)):
     return {"status": "ok", "data": result}
 
 
+@app.get("/db/voice_info")
+def get_voice_info(device_id: str = Form(...), is_resolved: bool = Form(...)):
+    result = voice_info_repo.get_voice_info(device_id, is_resolved)
+    return {"status": "ok", "data": result}
+
+
+@app.get("/db/voice_infos")
+def get_voice_info():
+    result = voice_info_repo.get_voice_infos()
+    return {"status": "ok", "data": result}
+
+
 @app.post("/detect")
 async def detect_speech(
         device_id: str = Form(...),

@@ -39,3 +39,10 @@ class VoiceInfoRepository:
     def get_emergency_contacts(self, device_id):
         return self._query_as_dicts(f"SELECT * FROM EmergencyContacts WHERE DeviceId == '{device_id}'")
 
+    def get_voice_info(self, device_id, is_resolved):
+        result = self._query_as_dicts(f"SELECT * FROM VoiceInfo WHERE DeviceId == '{device_id}' AND Resolved == '{is_resolved}'")
+        return result
+
+    def get_voice_infos(self):
+        result = self._query_as_dicts(f"SELECT * FROM VoiceInfo WHERE Resolved == 'false'")
+        return result
