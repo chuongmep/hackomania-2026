@@ -151,7 +151,7 @@ export default function SummaryPanel({ selectedAlert }){
             animation: 'pulse 2s infinite'
           }} />
           <span style={{fontWeight: '600', color: '#cbd5e1', fontSize: '10px', letterSpacing: '0.3px'}}>
-            {selectedAlert.time.toUpperCase()} • LIVE RECORDING
+            {selectedAlert.time.toUpperCase()} • RECORDING
           </span>
         </div>
         <p style={{

@@ -42,26 +42,21 @@ export default function Login({ isOpen, onClose, onLogin }) {
         border: '1px solid rgba(59, 130, 246, 0.3)',
         boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)'
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-          <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '600', color: '#f1f5f9' }}>Admin Login</h2>
-          <button
-            onClick={onClose}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: '#94a3b8',
-              cursor: 'pointer',
-              fontSize: '24px',
-              padding: 0,
-              width: '32px',
-              height: '32px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+          <img 
+            src="/icon.avif" 
+            alt="PAB Emergency Response" 
+            width="64" 
+            height="64"
+            style={{ 
+              borderRadius: '12px',
+              objectFit: 'cover'
             }}
-          >
-            ×
-          </button>
+          />
+        </div>
+
+        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+          <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '600', color: '#f1f5f9' }}>Login</h2>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -82,7 +77,8 @@ export default function Login({ isOpen, onClose, onLogin }) {
                 borderRadius: '6px',
                 color: '#f1f5f9',
                 fontSize: '14px',
-                outline: 'none'
+                outline: 'none',
+                boxSizing: 'border-box'
               }}
               required
             />
@@ -105,7 +101,8 @@ export default function Login({ isOpen, onClose, onLogin }) {
                 borderRadius: '6px',
                 color: '#f1f5f9',
                 fontSize: '14px',
-                outline: 'none'
+                outline: 'none',
+                boxSizing: 'border-box'
               }}
               required
             />
@@ -119,7 +116,8 @@ export default function Login({ isOpen, onClose, onLogin }) {
               borderRadius: '6px',
               color: '#fca5a5',
               fontSize: '12px',
-              marginBottom: '16px'
+              marginBottom: '16px',
+              boxSizing: 'border-box'
             }}>
               {error}
             </div>
@@ -137,25 +135,12 @@ export default function Login({ isOpen, onClose, onLogin }) {
               fontSize: '14px',
               fontWeight: '600',
               cursor: 'pointer',
-              boxShadow: '0 4px 6px rgba(59, 130, 246, 0.3)'
+              boxShadow: '0 4px 6px rgba(59, 130, 246, 0.3)',
+              boxSizing: 'border-box'
             }}
           >
             Sign In
           </button>
-
-          <div style={{
-            marginTop: '16px',
-            padding: '12px',
-            background: 'rgba(59, 130, 246, 0.1)',
-            border: '1px solid rgba(59, 130, 246, 0.2)',
-            borderRadius: '6px',
-            fontSize: '11px',
-            color: '#94a3b8'
-          }}>
-            <strong style={{ color: '#60a5fa' }}>Demo credentials:</strong><br />
-            Email: admin@gmail.com<br />
-            Password: 12345
-          </div>
         </form>
       </div>
     </div>
