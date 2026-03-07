@@ -10,6 +10,7 @@ function App() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isHolding, setIsHolding] = useState(false);
   const [holdProgress, setHoldProgress] = useState(0);
+  const [fullscreenSupported, setFullscreenSupported] = useState(true);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const appRef = useRef(null);
@@ -228,14 +229,37 @@ function App() {
 
   const toggleFullscreen = async () => {
     try {
-      if (!document.fullscreenElement) {
-        // Enter fullscreen
-        if (appRef.current.requestFullscreen) {
-          await appRef.current.requestFullscreen();
-        } else if (appRef.current.webkitRequestFullscreen) {
-          await appRef.current.webkitRequestFullscreen();
-        } else if (appRef.current.msRequestFullscreen) {
-          await appRef.current.msRequestFullscreen();
+      const elem = appRef.current;
+      
+      // Check if already in fullscreen
+      const isCurrentlyFullscreen = 
+        document.fullscreenElement || 
+        document.webkitFullscreenElement || 
+        document.mozFullScreenElement ||
+        document.msFullscreenElement;
+      
+      if (!isCurrentlyFullscreen) {
+        // Enter fullscreen - try different methods
+        if (elem.requestFullscreen) {
+          await elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) {
+          // Safari
+          await elem.webkitRequestFullscreen();
+        } else if (elem.webkitEnterFullscreen) {
+          // iOS Safari (video element only, but try anyway)
+          await elem.webkitEnterFullscreen();
+        } else if (elem.mozRequestFullScreen) {
+          // Firefox
+          await elem.mozRequestFullScreen();
+        } else if (elem.msRequestFullscreen) {
+          // IE11
+          await elem.msRequestFullscreen();
+        } else {
+          // Fallback: Try to hide browser UI on mobile
+          if (window.innerHeight < window.outerHeight) {
+            window.scrollTo(0, 1);
+          }
+          console.warn('Fullscreen API not supported on this device');
         }
         setIsFullscreen(true);
       } else {
@@ -244,6 +268,10 @@ function App() {
           await document.exitFullscreen();
         } else if (document.webkitExitFullscreen) {
           await document.webkitExitFullscreen();
+        } else if (document.webkitCancelFullScreen) {
+          await document.webkitCancelFullScreen();
+        } else if (document.mozCancelFullScreen) {
+          await document.mozCancelFullScreen();
         } else if (document.msExitFullscreen) {
           await document.msExitFullscreen();
         }
@@ -251,13 +279,31 @@ function App() {
       }
     } catch (error) {
       console.error('Error toggling fullscreen:', error);
+      // On iOS, fullscreen might not be available, just update state
+      setIsFullscreen(!isFullscreen);
     }
   };
 
   // Listen for fullscreen changes
   React.useEffect(() => {
+    // Check if fullscreen is supported
+    const isSupported = !!(
+      document.fullscreenEnabled ||
+      document.webkitFullscreenEnabled ||
+      document.mozFullScreenEnabled ||
+      document.msFullscreenEnabled
+    );
+    
+    setFullscreenSupported(isSupported);
+    
     const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
+      const isNowFullscreen = !!(
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement
+      );
+      setIsFullscreen(isNowFullscreen);
     };
 
     document.addEventListener('fullscreenchange', handleFullscreenChange);
@@ -279,22 +325,24 @@ function App() {
 
   return (
     <div className="app" ref={appRef}>
-      <button 
-        className="fullscreen-toggle"
-        onClick={toggleFullscreen}
-        aria-label="Toggle fullscreen"
-        title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-      >
-        {isFullscreen ? (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
-          </svg>
-        ) : (
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
-          </svg>
-        )}
-      </button>
+      {fullscreenSupported && (
+        <button 
+          className="fullscreen-toggle"
+          onClick={toggleFullscreen}
+          aria-label="Toggle fullscreen"
+          title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+        >
+          {isFullscreen ? (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
+            </svg>
+          ) : (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+            </svg>
+          )}
+        </button>
+      )}
       <div className="container">
         <div className="emergency-badge">🚨 EMERGENCY ALERT</div>
         <h1 className="title">Personal Alert</h1>
