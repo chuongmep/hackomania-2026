@@ -20,9 +20,6 @@ export default function Login({ isOpen, onClose, onLogin }) {
     }
   };
 
-  // Check if closing is allowed (onClose is not an empty function)
-  const canClose = onClose.toString() !== '() => {}';
-
   return (
     <div style={{
       position: 'fixed',
@@ -58,32 +55,8 @@ export default function Login({ isOpen, onClose, onLogin }) {
           />
         </div>
 
-        <div style={{ textAlign: 'center', marginBottom: '24px', position: 'relative' }}>
+        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '600', color: '#f1f5f9' }}>Login</h2>
-          {canClose && (
-            <button
-              onClick={onClose}
-              style={{
-                position: 'absolute',
-                right: 0,
-                top: '50%',
-                transform: 'translateY(-50%)',
-                background: 'transparent',
-                border: 'none',
-                color: '#94a3b8',
-                cursor: 'pointer',
-                fontSize: '24px',
-                padding: 0,
-                width: '32px',
-                height: '32px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              ×
-            </button>
-          )}
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -104,7 +77,8 @@ export default function Login({ isOpen, onClose, onLogin }) {
                 borderRadius: '6px',
                 color: '#f1f5f9',
                 fontSize: '14px',
-                outline: 'none'
+                outline: 'none',
+                boxSizing: 'border-box'
               }}
               required
             />
@@ -127,7 +101,8 @@ export default function Login({ isOpen, onClose, onLogin }) {
                 borderRadius: '6px',
                 color: '#f1f5f9',
                 fontSize: '14px',
-                outline: 'none'
+                outline: 'none',
+                boxSizing: 'border-box'
               }}
               required
             />
@@ -141,7 +116,8 @@ export default function Login({ isOpen, onClose, onLogin }) {
               borderRadius: '6px',
               color: '#fca5a5',
               fontSize: '12px',
-              marginBottom: '16px'
+              marginBottom: '16px',
+              boxSizing: 'border-box'
             }}>
               {error}
             </div>
@@ -159,7 +135,8 @@ export default function Login({ isOpen, onClose, onLogin }) {
               fontSize: '14px',
               fontWeight: '600',
               cursor: 'pointer',
-              boxShadow: '0 4px 6px rgba(59, 130, 246, 0.3)'
+              boxShadow: '0 4px 6px rgba(59, 130, 246, 0.3)',
+              boxSizing: 'border-box'
             }}
           >
             Sign In
