@@ -67,6 +67,12 @@ async def detect_speech(
     return {"lang": lang, "transcript": transcript, "device_id": device_id, "score": score, "priority": priority,"matching_keyword": matching_keyword}
 
 
+@app.put("/db/voice_info/resolve")
+def resolve_voice_info(device_id: str = Form(...), resolved: bool = Form(...)):
+    voice_info_repo.update_resolved(device_id, resolved)
+    return {"status": "ok", "device_id": device_id, "resolved": resolved}
+
+
 @app.get("/scoring-config")
 def get_scoring_config():
     return voice_info_repo.get_scoring_config()
