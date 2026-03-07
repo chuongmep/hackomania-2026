@@ -91,12 +91,21 @@ function StatusBadge({ risk }) {
 
 export default function AlertsPanel({ selectedAlert, onSelectAlert }){
   const [resolvedAlerts, setResolvedAlerts] = useState([]);
+  const [attendedAlerts, setAttendedAlerts] = useState([]);
 
   const handleDispatchToggle = (alertId) => {
     if (resolvedAlerts.includes(alertId)) {
       setResolvedAlerts(resolvedAlerts.filter(id => id !== alertId));
     } else {
       setResolvedAlerts([...resolvedAlerts, alertId]);
+    }
+  };
+
+  const handleAttendToggle = (alertId) => {
+    if (attendedAlerts.includes(alertId)) {
+      setAttendedAlerts(attendedAlerts.filter(id => id !== alertId));
+    } else {
+      setAttendedAlerts([...attendedAlerts, alertId]);
     }
   };
 
@@ -265,7 +274,9 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
                 
                 {/* Action Buttons */}
                 <div style={{display: 'flex', gap: '6px', marginTop: '10px'}}>
-                  <button style={{
+                  <button 
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
                     flex: 1,
                     background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
                     color: '#fff',
@@ -291,7 +302,60 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
                     Call
                   </button>
                   <button 
-                    onClick={() => handleDispatchToggle(alert.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAttendToggle(alert.id);
+                    }}
+                    style={{
+                      flex: 1,
+                      background: attendedAlerts.includes(alert.id) 
+                        ? 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)' 
+                        : 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                      color: '#fff',
+                      border: 'none',
+                      padding: '7px 12px',
+                      borderRadius: '6px',
+                      fontSize: '11px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '4px',
+                      boxShadow: attendedAlerts.includes(alert.id)
+                        ? '0 2px 4px rgba(249, 115, 22, 0.4)'
+                        : '0 2px 4px rgba(245, 158, 11, 0.3)',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-1px)'}
+                    onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                  >
+                    {attendedAlerts.includes(alert.id) ? (
+                      <>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                          <circle cx="8.5" cy="7" r="4" />
+                          <path d="M20 8v6M23 11h-6" />
+                        </svg>
+                        Attending
+                      </>
+                    ) : (
+                      <>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                          <circle cx="8.5" cy="7" r="4" />
+                          <line x1="20" y1="8" x2="20" y2="14" />
+                          <line x1="23" y1="11" x2="17" y2="11" />
+                        </svg>
+                        Attend
+                      </>
+                    )}
+                  </button>
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDispatchToggle(alert.id);
+                    }}
                     style={{
                       flex: 1,
                       background: resolvedAlerts.includes(alert.id) 
@@ -331,25 +395,6 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
                         Resolve
                       </>
                     )}
-                  </button>
-                  <button style={{
-                    background: 'rgba(100, 116, 139, 0.5)',
-                    color: '#e2e8f0',
-                    border: '1px solid rgba(148, 163, 184, 0.3)',
-                    padding: '7px 10px',
-                    borderRadius: '6px',
-                    fontSize: '11px',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.background = 'rgba(100, 116, 139, 0.7)'}
-                  onMouseOut={(e) => e.currentTarget.style.background = 'rgba(100, 116, 139, 0.5)'}
-                  >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <circle cx="12" cy="12" r="10" />
-                      <line x1="12" y1="16" x2="12" y2="12" />
-                      <line x1="12" y1="8" x2="12.01" y2="8" />
-                    </svg>
                   </button>
                 </div>
               </div>
