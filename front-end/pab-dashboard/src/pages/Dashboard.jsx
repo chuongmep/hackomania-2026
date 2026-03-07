@@ -5,6 +5,7 @@ import MapPanel from "../components/MapPanel"
 import SummaryPanel from "../components/SummaryPanel"
 import ContactList from "../components/ContactList"
 import StatCards from "../components/StatCards"
+import Login from "../components/Login"
 
 // Professional Logo Icon
 function LogoIcon() {
@@ -44,6 +45,19 @@ function StatusIndicator({ online = true }) {
 
 export default function Dashboard() {
   const [selectedAlert, setSelectedAlert] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
+  const handleLogin = (email) => {
+    setIsLoggedIn(true);
+    setUserEmail(email);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUserEmail('');
+  };
 
   return (
     <div style={{
@@ -101,6 +115,88 @@ export default function Dashboard() {
               })}
             </span>
           </div>
+          
+          {/* Admin Login/User Info */}
+          {isLoggedIn ? (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              padding: '8px 12px',
+              background: 'rgba(59, 130, 246, 0.15)',
+              borderRadius: '8px',
+              border: '1px solid rgba(59, 130, 246, 0.3)'
+            }}>
+              <div style={{
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '14px',
+                fontWeight: '600'
+              }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <span style={{ fontSize: '13px', fontWeight: '600', color: '#e2e8f0' }}>
+                  Admin
+                </span>
+              </div>
+              <button
+                onClick={handleLogout}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#94a3b8',
+                  cursor: 'pointer',
+                  padding: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginLeft: '8px'
+                }}
+                title="Logout"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowLoginModal(true)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 16px',
+                background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '13px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                boxShadow: '0 4px 6px rgba(59, 130, 246, 0.3)',
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-1px)'}
+              onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+              Login
+            </button>
+          )}
         </div>
       </div>
 
@@ -155,6 +251,13 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* Login Component */}
+      <Login
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        onLogin={handleLogin}
+      />
     </div>
   )
 }
