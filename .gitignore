@@ -405,3 +405,6 @@ backend/.idea/
 *.env
 backend/.env
 */.venv/
+.env.local
+dist-combined
+dist

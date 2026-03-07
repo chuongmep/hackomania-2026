@@ -1,0 +1,19 @@
+{
+  "name": "hackomania-2026",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Combined deployment for PAB Dashboard and User Audio Recorder",
+  "scripts": {
+    "build": "bash deploy.sh",
+    "deploy": "vercel --prod",
+    "deploy:preview": "vercel",
+    "clean": "rm -rf dist-combined front-end/pab-dashboard/dist front-end/user-audio/build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/hackomania-2026"
+  },
+  "keywords": ["dashboard", "audio-recorder", "emergency-response"],
+  "author": "",
+  "license": "MIT"
+}

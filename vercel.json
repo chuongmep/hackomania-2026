@@ -1,0 +1,48 @@
+{
+  "buildCommand": "bash deploy.sh",
+  "outputDirectory": "dist-combined",
+  "installCommand": "echo 'Dependencies installed via deploy.sh'",
+  "rewrites": [
+    {
+      "source": "/user.html",
+      "destination": "/user.html"
+    },
+    {
+      "source": "/user-audio/:path*",
+      "destination": "/user-audio/:path*"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/static/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
+}
