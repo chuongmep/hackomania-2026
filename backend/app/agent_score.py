@@ -1,18 +1,17 @@
 import json
-
 from openai import OpenAI
 from pydantic import BaseModel
 
 SYSTEM_PROMPT = (
     "You are a medical distress-call scoring engine. You receive a transcript "
-    "of a patient's distress call and must calculate a single numeric RiskScore.\n"
+    "of a patient's distress call and must calculate a single numeric RiskScore and matching keyword in the transcript that you have found\n"
     "\n"
     "## Scoring Tables\n"
     "\n"
     "{DATA_BASE}\n"
     "\n"
     "## Instructions\n"
-    "\n"
+    "If the transcript is not in english, please translate it to english and compare it\n"
     "Analyze the transcript step by step:\n"
     "\n"
     "1. **Keyword Severity** — Scan the transcript for keywords listed in "
@@ -44,7 +43,8 @@ SYSTEM_PROMPT = (
 
 
 class RiskScore(BaseModel):
-    result: float
+    score: float
+    matching_keyword: list[str]
 
 
 class AgentScore:
@@ -66,4 +66,5 @@ class AgentScore:
             text_format=RiskScore
         )
 
-        return response.output_parsed.result
+        output = response.output_parsed
+        return output.score, output.matching_keyword

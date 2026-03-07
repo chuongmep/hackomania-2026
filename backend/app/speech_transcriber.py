@@ -1,4 +1,5 @@
 from openai import OpenAI
+from langdetect import detect
 
 
 class SpeechTranscriber:
@@ -6,10 +7,12 @@ class SpeechTranscriber:
         self.client = OpenAI(api_key=api_key)
         self.model = model
 
-    async def transcribe(self, audio_file) -> str:
+    async def transcribe(self, audio_file):
         transcription = self.client.audio.transcriptions.create(
             model=self.model,
             file=audio_file,
-            response_format="text",
+            response_format="text"
         )
-        return transcription
+
+        lang = detect(transcription)
+        return lang, transcription

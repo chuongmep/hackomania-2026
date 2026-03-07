@@ -1,5 +1,4 @@
 from clickhouse_connect.driver import Client
-from enum import Enum
 
 
 class Priority:
@@ -12,11 +11,11 @@ class VoiceInfoRepository:
     def __init__(self, client: Client):
         self.client = client
 
-    def insert(self, device_id: str, base64_audio: str, transcript: str, score: float):
+    def insert(self, device_id: str, base64_audio: str, transcript: str, lang: str, score: float, priority: str):
         self.client.insert(
             "VoiceInfo",
-            [[device_id, base64_audio, transcript, score]],
-            column_names=["DeviceId", "Base64", "Transcript", "RiskScore"],
+            [[device_id, base64_audio, transcript, lang, score, priority]],
+            column_names=["DeviceId", "Base64", "Transcript", "Language", "RiskScore", "Priority"],
         )
 
     def _query_as_dicts(self, query: str) -> list[dict]:
