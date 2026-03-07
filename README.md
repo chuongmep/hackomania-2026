@@ -8,6 +8,10 @@ This project consists of a comprehensive emergency response system with:
 - **User Audio Recorder**: Voice recording interface for emergency reports
 - **Backend API**: Python FastAPI backend for data management
 
+## Sytem Architecture
+
+![System Architecture Diagram](./docs/system-architecture.png)
+
 ## 🚀 Quick Start - Deployment
 
 Deploy both frontends to a single domain:
