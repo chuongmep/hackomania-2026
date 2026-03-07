@@ -67,10 +67,10 @@ async def detect_speech(
     audio_bytes = await file.read()
     audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
 
-    lang, transcript = await speech_transcriber.transcribe((file.filename, audio_bytes, file.content_type))
+    transcript = await speech_transcriber.transcribe((file.filename, audio_bytes, file.content_type))
     scoring_config = voice_info_repo.get_scoring_config()
     priorities = voice_info_repo.get_priorities()
-    score, matching_keyword = agent_score.calculate(transcript, scoring_config)
+    lang, score, matching_keyword = agent_score.calculate(transcript, scoring_config)
     priority = resolve_priority(priorities, score)
 
     voice_info_repo.insert(device_id, audio_base64, transcript, lang, score, priority)
