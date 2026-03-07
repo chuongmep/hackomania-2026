@@ -402,3 +402,5 @@ FodyWeavers.xsd
 *.idea
 .idea/
 backend/.idea/
+*.env
+backend/.env
