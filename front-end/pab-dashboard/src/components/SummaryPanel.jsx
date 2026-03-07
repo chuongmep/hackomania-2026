@@ -140,6 +140,46 @@ export default function SummaryPanel({ selectedAlert }){
             {selectedAlert.time.toUpperCase()} • RECORDING
           </span>
         </div>
+
+        {/* AI Reasoning */}
+        {selectedAlert.triageReasoning && (
+          <div style={{
+            background: 'rgba(59, 130, 246, 0.15)',
+            padding: '8px',
+            borderRadius: '6px',
+            marginBottom: '8px',
+            border: '1px solid rgba(59, 130, 246, 0.3)'
+          }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              marginBottom: '4px'
+            }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2.5">
+                <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+              <span style={{
+                fontWeight: '700',
+                color: '#3b82f6',
+                fontSize: '11px',
+                letterSpacing: '0.5px',
+                textTransform: 'uppercase'
+              }}>
+                AI Reasoning
+              </span>
+            </div>
+            <p style={{
+              margin: 0,
+              lineHeight: '1.6',
+              color: '#cbd5e1',
+              fontSize: '12px'
+            }}>
+              {selectedAlert.triageReasoning}
+            </p>
+          </div>
+        )}
+
         <p style={{
           margin: 0,
           lineHeight: '1.7',

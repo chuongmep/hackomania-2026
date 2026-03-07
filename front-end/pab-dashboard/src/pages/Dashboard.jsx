@@ -81,7 +81,8 @@ export default function Dashboard() {
               language: item.Language || 'en',
               resolved: item.Resolved || false,
               dateTimeStamp: item.DateTimeStamp || new Date().toISOString(),
-              deviceName: item.device_info?.DeviceName || item.DeviceId
+              deviceName: item.device_info?.DeviceName || item.DeviceId,
+              triageReasoning: item.TriageReasoning || ''
             }));
           
           setAlerts(transformedAlerts);
