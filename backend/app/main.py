@@ -8,7 +8,7 @@ app = FastAPI(title=settings.app_name, version=settings.app_version, debug=setti
 
 @app.get("/", response_model=MessageResponse)
 def root() -> MessageResponse:
-    return MessageResponse(message="Welcome to Hackomania API")
+    return MessageResponse(message="Welcome to HackIT API")
 
 
 @app.get("/health", response_model=HealthResponse)
