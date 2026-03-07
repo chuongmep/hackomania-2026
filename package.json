@@ -1,0 +1,13 @@
+{
+  "name": "hackomania-2026",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "npm run install:all && npm run build:all",
+    "install:all": "cd front-end/pab-dashboard && npm ci && cd ../user-audio && npm ci && cd ../..",
+    "build:all": "npm run build:dashboard && npm run build:user && npm run merge",
+    "build:dashboard": "cd front-end/pab-dashboard && npm run build && cd ../..",
+    "build:user": "cd front-end/user-audio && REACT_APP_API_URL=/api/audio npm run build && cd ../..",
+    "merge": "mkdir -p front-end/pab-dashboard/dist/static && cp -r front-end/user-audio/build/static/. front-end/pab-dashboard/dist/static/ 2>/dev/null || true && cp front-end/user-audio/build/index.html front-end/pab-dashboard/dist/user.html"
+  }
+}

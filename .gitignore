@@ -404,3 +404,5 @@ FodyWeavers.xsd
 backend/.idea/
 *.env
 backend/.env
+.vercel
+.env*.local
