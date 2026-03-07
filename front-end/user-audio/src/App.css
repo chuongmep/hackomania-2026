@@ -519,3 +519,75 @@
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
+
+/* Fullscreen toggle button */
+.fullscreen-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  width: 48px;
+  height: 48px;
+}
+
+.fullscreen-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.fullscreen-toggle:active {
+  transform: scale(0.95);
+}
+
+.fullscreen-toggle svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2.5;
+}
+
+/* Fullscreen mode adjustments */
+.app:fullscreen {
+  padding: 40px;
+}
+
+.app:-webkit-full-screen {
+  padding: 40px;
+}
+
+.app:-moz-full-screen {
+  padding: 40px;
+}
+
+.app:-ms-fullscreen {
+  padding: 40px;
+}
+
+/* Mobile responsiveness for fullscreen button */
+@media (max-width: 768px) {
+  .fullscreen-toggle {
+    top: 10px;
+    right: 10px;
+    width: 44px;
+    height: 44px;
+    padding: 10px;
+  }
+  
+  .fullscreen-toggle svg {
+    width: 20px;
+    height: 20px;
+  }
+}
