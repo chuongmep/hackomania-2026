@@ -119,7 +119,6 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
       status: "Fall Detected",
       risk: "High",
       time: "2 mins ago",
-      color: "#3b82f6",
       coordinates: [1.369115, 103.845436],
       transcript: "Hello? Help! I've fallen in the bathroom and I can't get up. My hip hurts badly. Please send help quickly. I'm alone at home and I think I might have broken something. The pain is getting worse... I pressed my emergency button but I don't know if anyone heard me."
     },
@@ -132,7 +131,6 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
       status: "No Response",
       risk: "Medium",
       time: "5 mins ago",
-      color: "#8b5cf6",
       coordinates: [1.324, 103.93],
       transcript: "[No verbal response detected] *Sound of objects falling* *Heavy breathing* *Faint moaning* [System note: Motion sensor triggered in bedroom. No response to automated voice prompts. Last known position: near bedroom door.]"
     },
@@ -145,7 +143,6 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
       status: "Medical Alert",
       risk: "High",
       time: "1 min ago",
-      color: "#ec4899",
       coordinates: [1.35, 103.94],
       transcript: "I'm not feeling well... chest pain... difficulty breathing. I took my heart medication but it's not helping. Please call my daughter at 9123-4567. The pain is on my left side and going down my arm. I'm sitting down now but I feel very dizzy and nauseous."
     }
@@ -232,7 +229,7 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
             <div style={{display: 'flex', gap: '12px', alignItems: 'flex-start'}}>
               {/* User Avatar */}
               <div style={{flexShrink: 0}}>
-                <UserAvatar name={alert.name} color={alert.color} risk={alert.risk} />
+                <UserAvatar name={alert.name} color="#3b82f6" risk={alert.risk} />
               </div>
               
               {/* Alert Details */}
