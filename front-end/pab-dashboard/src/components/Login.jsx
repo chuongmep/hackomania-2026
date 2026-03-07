@@ -20,6 +20,9 @@ export default function Login({ isOpen, onClose, onLogin }) {
     }
   };
 
+  // Check if closing is allowed (onClose is not an empty function)
+  const canClose = onClose.toString() !== '() => {}';
+
   return (
     <div style={{
       position: 'fixed',
@@ -42,26 +45,45 @@ export default function Login({ isOpen, onClose, onLogin }) {
         border: '1px solid rgba(59, 130, 246, 0.3)',
         boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)'
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-          <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '600', color: '#f1f5f9' }}>Login</h2>
-          <button
-            onClick={onClose}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: '#94a3b8',
-              cursor: 'pointer',
-              fontSize: '24px',
-              padding: 0,
-              width: '32px',
-              height: '32px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+          <img 
+            src="/icon.avif" 
+            alt="PAB Emergency Response" 
+            width="64" 
+            height="64"
+            style={{ 
+              borderRadius: '12px',
+              objectFit: 'cover'
             }}
-          >
-            ×
-          </button>
+          />
+        </div>
+
+        <div style={{ textAlign: 'center', marginBottom: '24px', position: 'relative' }}>
+          <h2 style={{ margin: 0, fontSize: '20px', fontWeight: '600', color: '#f1f5f9' }}>Login</h2>
+          {canClose && (
+            <button
+              onClick={onClose}
+              style={{
+                position: 'absolute',
+                right: 0,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'transparent',
+                border: 'none',
+                color: '#94a3b8',
+                cursor: 'pointer',
+                fontSize: '24px',
+                padding: 0,
+                width: '32px',
+                height: '32px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              ×
+            </button>
+          )}
         </div>
 
         <form onSubmit={handleSubmit}>
