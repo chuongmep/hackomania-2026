@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from clickhouse_connect.driver import Client
 
 
@@ -11,11 +13,23 @@ class VoiceInfoRepository:
     def __init__(self, client: Client):
         self.client = client
 
-    def insert(self, device_id: str, base64_audio: str, transcript: str, lang: str, score: float, priority: str):
+    def upsert(self, device_id: str, base64_audio: str, transcript: str, lang: str, score: float, priority: str, triage_reasoning: str):
+        existing = self.client.query(
+            "SELECT count() FROM VoiceInfo WHERE DeviceId = {device_id:String}",
+            parameters={"device_id": device_id},
+        ).result_rows[0][0]
+
+        if existing > 0:
+            self.client.command(
+                "DELETE FROM VoiceInfo WHERE DeviceId = {device_id:String}",
+                parameters={"device_id": device_id},
+            )
+            self.client.command("OPTIMIZE TABLE VoiceInfo FINAL")
+
         self.client.insert(
             "VoiceInfo",
-            [[device_id, base64_audio, transcript, lang, score, priority]],
-            column_names=["DeviceId", "Base64", "Transcript", "Language", "RiskScore", "Priority"],
+            [[device_id, base64_audio, transcript, lang, score, priority, triage_reasoning, datetime.now(timezone.utc)]],
+            column_names=["DeviceId", "Base64", "Transcript", "Language", "RiskScore", "Priority", "TriageReasoning", "DateTimeStamp"],
         )
 
     def _query_as_dicts(self, query: str) -> list[dict]:

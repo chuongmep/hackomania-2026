@@ -1,5 +1,5 @@
 import base64
-from fastapi import FastAPI, Form, UploadFile, File
+from fastapi import FastAPI, Form, Query, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.db import get_client
@@ -7,14 +7,21 @@ from app.schemas import HealthResponse, MessageResponse
 from app.speech_transcriber import SpeechTranscriber
 from app.agent_score import AgentScore
 from app.voice_info_repository import VoiceInfoRepository
-from app.utils import resolve_priority
+from app.device_repository import DeviceRepository
+from app.utils import resolve_priority, time_ago
 
 app = FastAPI(title=settings.app_name, version=settings.app_version, debug=settings.debug)
+
+origins = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://hackomania-2026.vercel.app",
+]
 
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
@@ -22,6 +29,8 @@ app.add_middleware(
 
 speech_transcriber = SpeechTranscriber(settings.open_api_key)
 client = get_client()
+
+device_repository = DeviceRepository(client)
 voice_info_repo = VoiceInfoRepository(client)
 agent_score = AgentScore(settings.open_api_key)
 
@@ -43,21 +52,25 @@ def db_ping():
 
 
 @app.get("/db/emergency_contacts")
-def get_emergency_contacts(device_id: str = Form(...)):
+def get_emergency_contacts(device_id: str = Query(...)):
     result = voice_info_repo.get_emergency_contacts(device_id)
     return {"status": "ok", "data": result}
 
 
 @app.get("/db/voice_info")
-def get_voice_info(device_id: str = Form(...), is_resolved: bool = Form(...)):
+def get_voice_info(device_id: str = Query(...), is_resolved: bool = Query(...)):
     result = voice_info_repo.get_voice_info(device_id, is_resolved)
     return {"status": "ok", "data": result}
 
 
 @app.get("/db/voice_infos")
 def get_voice_info():
-    result = voice_info_repo.get_voice_infos()
-    return {"status": "ok", "data": result}
+    voice_infos = voice_info_repo.get_voice_infos()
+    for voice_info in voice_infos:
+        device = device_repository.get(voice_info["DeviceId"])
+        voice_info["device_info"] = device[0] if device else None
+        voice_info["time_ago"] = time_ago(voice_info["DateTimeStamp"])
+    return {"status": "ok", "data": voice_infos}
 
 
 @app.post("/detect")
@@ -70,12 +83,12 @@ async def detect_speech(
     transcript = await speech_transcriber.transcribe((file.filename, audio_bytes, file.content_type))
     scoring_config = voice_info_repo.get_scoring_config()
     priorities = voice_info_repo.get_priorities()
-    lang, score, matching_keyword = agent_score.calculate(transcript, scoring_config)
+    lang, score, matching_keyword, triage_reasoning = agent_score.calculate(transcript, scoring_config)
     priority = resolve_priority(priorities, score)
 
-    voice_info_repo.insert(device_id, audio_base64, transcript, lang, score, priority)
+    voice_info_repo.upsert(device_id, audio_base64, transcript, lang, score, priority, triage_reasoning)
 
-    return {"lang": lang, "transcript": transcript, "device_id": device_id, "score": score, "priority": priority,"matching_keyword": matching_keyword}
+    return {"lang": lang, "transcript": transcript, "device_id": device_id, "score": score, "priority": priority, "matching_keyword": matching_keyword, "triage_reasoning": triage_reasoning}
 
 
 @app.put("/db/voice_info/resolve")
