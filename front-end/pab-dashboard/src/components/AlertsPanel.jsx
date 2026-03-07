@@ -89,7 +89,7 @@ function StatusBadge({ risk }) {
   );
 }
 
-export default function AlertsPanel({ selectedAlert, onSelectAlert }){
+export default function AlertsPanel({ selectedAlert, onSelectAlert, alerts = [], loading = false }){
   const [resolvedAlerts, setResolvedAlerts] = useState([]);
   const [attendedAlerts, setAttendedAlerts] = useState([]);
 
@@ -109,44 +109,39 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
     }
   };
 
-  const alerts=[
-    {
-      id: 1,
-      name: "Mr Tan Ah Kow",
-      device_id: "PAB-00083912",
-      age: 78,
-      location: "Blk 123, Ang Mo Kio Ave 3, #05-45",
-      status: "Fall Detected",
-      risk: "High",
-      time: "2 mins ago",
-      coordinates: [1.369115, 103.845436],
-      transcript: "Hello? Help! I've fallen in the bathroom and I can't get up. My hip hurts badly. Please send help quickly. I'm alone at home and I think I might have broken something. The pain is getting worse... I pressed my emergency button but I don't know if anyone heard me."
-    },
-    {
-      id: 2,
-      name: "Madam Lee Siew Hong",
-      device_id: "PAB-00084201",
-      age: 82,
-      location: "Blk 456, Bedok North St 2, #12-88",
-      status: "No Response",
-      risk: "Medium",
-      time: "5 mins ago",
-      coordinates: [1.324, 103.93],
-      transcript: "[No verbal response detected] *Sound of objects falling* *Heavy breathing* *Faint moaning* [System note: Motion sensor triggered in bedroom. No response to automated voice prompts. Last known position: near bedroom door.]"
-    },
-    {
-      id: 3,
-      name: "Mr Kumar Ramasamy",
-      device_id: "PAB-00085476",
-      age: 75,
-      location: "Blk 789, Tampines Ave 5, #08-22",
-      status: "Medical Alert",
-      risk: "High",
-      time: "1 min ago",
-      coordinates: [1.35, 103.94],
-      transcript: "I'm not feeling well... chest pain... difficulty breathing. I took my heart medication but it's not helping. Please call my daughter at 9123-4567. The pain is on my left side and going down my arm. I'm sitting down now but I feel very dizzy and nauseous."
-    }
-  ]
+  // Show loading state
+  if (loading) {
+    return(
+      <div style={{
+        background: "#1e293b",
+        padding: "15px",
+        borderRadius: "10px",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center"
+      }}>
+        <div style={{textAlign: 'center'}}>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            border: '4px solid rgba(59, 130, 246, 0.3)',
+            borderTop: '4px solid #3b82f6',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 12px'
+          }} />
+          <p style={{color: '#94a3b8', fontSize: '13px'}}>Loading alerts...</p>
+        </div>
+        <style>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    );
+  }
 
   return(
     <div style={{

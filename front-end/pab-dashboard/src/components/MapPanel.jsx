@@ -55,35 +55,23 @@ const createCustomIcon = (color, isSelected, risk) => {
   });
 };
 
-export default function MapPanel({ selectedAlert }){
+export default function MapPanel({ selectedAlert, alerts = [] }){
   
-  // All alerts with their locations
-  const alerts = [
-    {
-      id: 1,
-      name: "Mr Tan Ah Kow",
-      status: "Fall Detected",
-      risk: "High",
-      color: "#3b82f6",
-      coordinates: [1.369115, 103.845436]
-    },
-    {
-      id: 2,
-      name: "Madam Lee Siew Hong",
-      status: "No Response",
-      risk: "Medium",
-      color: "#8b5cf6",
-      coordinates: [1.324, 103.93]
-    },
-    {
-      id: 3,
-      name: "Mr Kumar Ramasamy",
-      status: "Medical Alert",
-      risk: "High",
-      color: "#ec4899",
-      coordinates: [1.35, 103.94]
-    }
-  ];
+  // Get risk-based color for markers
+  const getRiskColor = (risk) => {
+    const colors = {
+      'High': '#ef4444',
+      'Medium': '#f59e0b',
+      'Low': '#10b981'
+    };
+    return colors[risk] || '#3b82f6';
+  };
+
+  // Transform alerts to include color based on risk
+  const alertsWithColors = alerts.map(alert => ({
+    ...alert,
+    color: getRiskColor(alert.risk)
+  }));
 
   return(
     <div style={{
@@ -168,7 +156,7 @@ export default function MapPanel({ selectedAlert }){
           
           <MapController selectedAlert={selectedAlert} />
           
-          {alerts.map((alert) => {
+          {alertsWithColors.map((alert) => {
             const isSelected = selectedAlert?.id === alert.id;
             return (
               <Marker 

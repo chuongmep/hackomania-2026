@@ -1,5 +1,6 @@
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import axios from "axios"
 import AlertsPanel from "../components/AlertsPanel"
 import MapPanel from "../components/MapPanel"
 import SummaryPanel from "../components/SummaryPanel"
@@ -46,6 +47,59 @@ export default function Dashboard() {
   const [selectedAlert, setSelectedAlert] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState('');
+  const [alerts, setAlerts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch alerts from API
+  useEffect(() => {
+    const fetchAlerts = async () => {
+      try {
+        const response = await axios.get('/api/db/voice_infos');
+        
+        if (response.data.status === 'ok' && response.data.data) {
+          // Transform API data to match component structure
+          const transformedAlerts = response.data.data
+            .filter(item => item.device_info !== null && item.device_info !== undefined)
+            .map((item, index) => ({
+              id: item.Id,
+              name: item.device_info?.UserName || 'Unknown User',
+              device_id: item.DeviceId,
+              age: item.device_info?.Age || 0,
+              location: item.device_info?.Address || 'Location Unknown',
+              status: item.Priority === "High" ? "Critical Alert" : item.Priority === "Medium" ? "Medical Alert" : "Low Priority",
+              risk: item.Priority,
+              time: item.time_ago || 'Unknown',
+              coordinates: [
+                item.device_info?.CoordN || 1.3521, 
+                item.device_info?.CoordE || 103.8198
+              ],
+              transcript: item.Transcript || 'No transcript available',
+              contact: item.device_info?.Contact || null,
+              email: item.device_info?.Email || null,
+              risks: item.device_info?.Risks || 'Unknown',
+              riskScore: item.RiskScore || 0,
+              language: item.Language || 'en',
+              resolved: item.Resolved || false,
+              dateTimeStamp: item.DateTimeStamp || new Date().toISOString(),
+              deviceName: item.device_info?.DeviceName || item.DeviceId
+            }));
+          
+          setAlerts(transformedAlerts);
+        }
+      } catch (error) {
+        console.error('Error fetching alerts:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (isLoggedIn) {
+      fetchAlerts();
+      // Refresh data every 5 seconds
+      const interval = setInterval(fetchAlerts, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [isLoggedIn]);
 
   const handleLogin = (email) => {
     setIsLoggedIn(true);
@@ -227,6 +281,8 @@ export default function Dashboard() {
           <AlertsPanel 
             selectedAlert={selectedAlert}
             onSelectAlert={setSelectedAlert}
+            alerts={alerts}
+            loading={loading}
           />
         </div>
 
@@ -251,7 +307,7 @@ export default function Dashboard() {
               height: "100%",
               overflow: "hidden" 
             }}>
-              <MapPanel selectedAlert={selectedAlert} />
+              <MapPanel selectedAlert={selectedAlert} alerts={alerts} />
             </div>
 
             {/* Stats Section - Right half */}
@@ -259,7 +315,7 @@ export default function Dashboard() {
               height: "100%",
               overflow: "hidden"
             }}>
-              <StatCards />
+              <StatCards alerts={alerts} />
             </div>
           </div>
 

@@ -1,10 +1,15 @@
 
-export default function StatCards(){
+export default function StatCards({ alerts = [] }){
 
+  // Calculate statistics from alerts
+  const activeAlerts = alerts.length;
+  const highRiskCount = alerts.filter(alert => alert.risk === 'High').length;
+  const mediumRiskCount = alerts.filter(alert => alert.risk === 'Medium').length;
+  
   const stats=[
     {
       label: "Active Alerts",
-      value: 3,
+      value: activeAlerts,
       color: "#ef4444",
       bgGradient: "linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.05) 100%)",
       icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -12,11 +17,11 @@ export default function StatCards(){
         <line x1="12" y1="9" x2="12" y2="13" />
         <line x1="12" y1="17" x2="12.01" y2="17" />
       </svg>,
-      trend: "+2"
+      trend: activeAlerts > 0 ? `LIVE` : "0"
     },
     {
-      label: "High Risk Seniors",
-      value: 5,
+      label: "High Risk",
+      value: highRiskCount,
       color: "#f59e0b",
       bgGradient: "linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.05) 100%)",
       icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -25,21 +30,21 @@ export default function StatCards(){
         <path d="M23 21v-2a4 4 0 00-3-3.87" />
         <path d="M16 3.13a4 4 0 010 7.75" />
       </svg>,
-      trend: "+1"
+      trend: highRiskCount > 0 ? "!" : "0"
     },
     {
-      label: "Calls Today",
-      value: 12,
+      label: "Medium Risk",
+      value: mediumRiskCount,
       color: "#3b82f6",
       bgGradient: "linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.05) 100%)",
       icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
         <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
       </svg>,
-      trend: "+4"
+      trend: mediumRiskCount > 0 ? "!" : "0"
     },
     {
-      label: "Responders Available",
-      value: 4,
+      label: "System Status",
+      value: "OK",
       color: "#10b981",
       bgGradient: "linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.05) 100%)",
       icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">

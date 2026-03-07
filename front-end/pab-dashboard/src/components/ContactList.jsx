@@ -26,22 +26,23 @@ export default function ContactList({ selectedAlert }) {
 
   const familyContacts = selectedAlert ? [
     {
-      name: selectedAlert.id === 1 ? "Tan Wei Ming" : selectedAlert.id === 2 ? "Lee Hui Ling" : "Kumar Sanjay",
-      relation: "Son",
-      phone: selectedAlert.id === 1 ? "+65 9123 4567" : selectedAlert.id === 2 ? "+65 9234 5678" : "+65 9345 6789",
+      name: selectedAlert.name,
+      relation: "Patient",
+      phone: selectedAlert.contact ? `+65 ${selectedAlert.contact}` : "N/A",
+      email: selectedAlert.email || "N/A",
       icon: "family",
       priority: "high"
     },
     {
-      name: selectedAlert.id === 1 ? "Tan Mei Ling" : selectedAlert.id === 2 ? "Lee Chen Wei" : "Kumar Priya",
-      relation: "Daughter",
-      phone: selectedAlert.id === 1 ? "+65 9234 5678" : selectedAlert.id === 2 ? "+65 9345 6789" : "+65 9456 7890",
-      icon: "family",
+      name: selectedAlert.deviceName || selectedAlert.device_id,
+      relation: "Device",
+      phone: selectedAlert.device_id,
+      icon: "center",
       priority: "medium"
     },
     {
       name: "Family Doctor",
-      relation: "Dr. Wong",
+      relation: "Primary Care",
       phone: "+65 6234 5678",
       icon: "doctor",
       priority: "medium"
