@@ -1,4 +1,4 @@
-export default function ContactList({ selectedAlert }) {
+export default function ContactList({ selectedAlert, personalContacts = [] }) {
   
   const emergencyContacts = [
     {
@@ -24,30 +24,16 @@ export default function ContactList({ selectedAlert }) {
     }
   ];
 
-  const familyContacts = selectedAlert ? [
-    {
-      name: selectedAlert.name,
-      relation: "Patient",
-      phone: selectedAlert.contact ? `+65 ${selectedAlert.contact}` : "N/A",
-      email: selectedAlert.email || "N/A",
+  const familyContacts = selectedAlert ? 
+    personalContacts.map(contact => ({
+      name: contact.name,
+      relation: contact.relation,
+      phone: contact.phone ? `+65 ${contact.phone}` : "N/A",
+      address: contact.address,
       icon: "family",
-      priority: "high"
-    },
-    {
-      name: selectedAlert.deviceName || selectedAlert.device_id,
-      relation: "Device",
-      phone: selectedAlert.device_id,
-      icon: "center",
       priority: "medium"
-    },
-    {
-      name: "Family Doctor",
-      relation: "Primary Care",
-      phone: "+65 6234 5678",
-      icon: "doctor",
-      priority: "medium"
-    }
-  ] : [];
+    }))
+  : [];
 
   const getIcon = (type) => {
     const icons = {

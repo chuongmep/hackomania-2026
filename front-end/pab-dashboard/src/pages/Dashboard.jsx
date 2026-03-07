@@ -49,6 +49,7 @@ export default function Dashboard() {
   const [userEmail, setUserEmail] = useState('');
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [personalContacts, setPersonalContacts] = useState([]);
 
   // Fetch alerts from API
   useEffect(() => {
@@ -112,6 +113,47 @@ export default function Dashboard() {
       }
     }
   }, [alerts]);
+
+  // Fetch personal contacts when alert is selected
+  useEffect(() => {
+    const fetchPersonalContacts = async () => {
+      if (selectedAlert && selectedAlert.device_id) {
+        try {
+          const response = await axios.get('/api/db/voice_infos');
+          console.log('Personal Contacts Response:', response.data); // Debug log
+          
+          // Check if response is an array directly or nested in data
+          const dataArray = Array.isArray(response.data) ? response.data : 
+                           (response.data.data ? response.data.data : []);
+          
+          // Filter items by device_id and extract contacts array from each item
+          const contacts = dataArray
+            .filter(item => item.DeviceId === selectedAlert.device_id)
+            .flatMap(item => item.contacts || [])
+            .map(contact => ({
+              id: contact.Id,
+              name: contact.Name,
+              relation: contact.Relationship,
+              phone: contact.PhoneNumber,
+              address: contact.Address,
+              deviceId: contact.DeviceId
+            }));
+          
+          console.log('Filtered Personal Contacts:', contacts); // Debug log
+          setPersonalContacts(contacts);
+        } catch (error) {
+          console.error('Error fetching personal contacts:', error);
+          setPersonalContacts([]);
+        }
+      } else {
+        setPersonalContacts([]);
+      }
+    };
+
+    if (isLoggedIn) {
+      fetchPersonalContacts();
+    }
+  }, [selectedAlert, isLoggedIn]);
 
   const handleLogin = (email) => {
     setIsLoggedIn(true);
@@ -342,7 +384,7 @@ export default function Dashboard() {
             overflow: "hidden"
           }}>
             <SummaryPanel selectedAlert={selectedAlert} />
-            <ContactList selectedAlert={selectedAlert} />
+              <ContactList selectedAlert={selectedAlert} personalContacts={personalContacts} />
           </div>
         </div>
       </div>
