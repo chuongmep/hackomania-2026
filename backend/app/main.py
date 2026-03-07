@@ -95,10 +95,10 @@ async def detect_speech(
     return {"lang": lang, "transcript": transcript, "device_id": device_id, "score": score, "priority": priority, "matching_keyword": matching_keyword, "triage_reasoning": triage_reasoning}
 
 
-@app.put("/db/voice_info/resolve")
-def resolve_voice_info(voice_info_id: str = Form(...), resolved: bool = Form(...)):
-    voice_info_repo.update_resolved(voice_info_id, resolved)
-    return {"status": "ok", "voice_info_id": voice_info_id, "resolved": resolved}
+@app.post("/db/voice_info/resolve")
+def resolve_voice_info(device_id: str = Query(...)):
+    voice_info_repo.delete(device_id)
+    return {"status": "ok", "resolved": True}
 
 
 @app.get("/scoring-config")
