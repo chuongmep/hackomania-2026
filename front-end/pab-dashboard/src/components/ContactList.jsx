@@ -244,7 +244,7 @@ export default function ContactList({ selectedAlert }) {
             marginBottom: '5px',
             textTransform: 'uppercase'
           }}>
-            Emergency Response
+            Hotline
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             {emergencyContacts.map((contact, i) => (

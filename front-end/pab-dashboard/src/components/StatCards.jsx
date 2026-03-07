@@ -55,10 +55,19 @@ export default function StatCards({ alerts = [] }){
   ]
 
   return(
+    <div style={{
+      background: "rgba(30, 41, 59, 0.6)",
+      padding: "10px",
+      borderRadius: "10px",
+      backdropFilter: "blur(10px)",
+      border: "1px solid rgba(71, 85, 105, 0.5)",
+      height: "100%",
+      overflow: "hidden"
+    }}>
     <div className="stat-cards" style={{
       display:"grid",
       gridTemplateColumns:"repeat(2, 1fr)",
-      gap:"10px",
+      gap:"6px",
       height: "100%"
     }}>
       <style>{`
@@ -76,8 +85,8 @@ export default function StatCards({ alerts = [] }){
       {stats.map((s,i)=>(
         <div key={i} style={{
           background: s.bgGradient,
-          padding: "16px 18px",
-          borderRadius: "12px",
+          padding: "8px 10px",
+          borderRadius: "8px",
           border: `1.5px solid ${s.color}50`,
           backdropFilter: "blur(10px)",
           position: "relative",
@@ -86,12 +95,12 @@ export default function StatCards({ alerts = [] }){
           boxShadow: `0 2px 8px ${s.color}15`
         }}
         onMouseOver={(e) => {
-          e.currentTarget.style.transform = 'translateY(-3px) scale(1.01)';
-          e.currentTarget.style.boxShadow = `0 12px 24px ${s.color}35`;
+          e.currentTarget.style.transform = 'translateY(-1px)';
+          e.currentTarget.style.boxShadow = `0 4px 12px ${s.color}35`;
           e.currentTarget.style.borderColor = `${s.color}80`;
         }}
         onMouseOut={(e) => {
-          e.currentTarget.style.transform = 'translateY(0) scale(1)';
+          e.currentTarget.style.transform = 'translateY(0)';
           e.currentTarget.style.boxShadow = `0 2px 8px ${s.color}15`;
           e.currentTarget.style.borderColor = `${s.color}50`;
         }}
@@ -99,11 +108,11 @@ export default function StatCards({ alerts = [] }){
           {/* Background Icon */}
           <div style={{
             position: 'absolute',
-            right: '-15px',
-            top: '-15px',
-            width: '80px',
-            height: '80px',
-            opacity: '0.06',
+            right: '-8px',
+            top: '-8px',
+            width: '50px',
+            height: '50px',
+            opacity: '0.05',
             color: s.color,
             transform: 'rotate(-15deg)'
           }}>
@@ -116,68 +125,68 @@ export default function StatCards({ alerts = [] }){
             top: 0,
             left: 0,
             right: 0,
-            height: '3px',
+            height: '2px',
             background: `linear-gradient(90deg, ${s.color}00 0%, ${s.color} 50%, ${s.color}00 100%)`,
-            opacity: 0.6
+            opacity: 0.5
           }} />
           
           <div style={{position: 'relative', zIndex: 1}}>
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '10px'}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '4px'}}>
               <div style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '8px',
+                width: '24px',
+                height: '24px',
+                borderRadius: '5px',
                 background: `${s.color}25`,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: s.color,
-                boxShadow: `0 4px 8px ${s.color}20`,
+                boxShadow: `0 1px 3px ${s.color}20`,
                 border: `1px solid ${s.color}30`
               }}>
-                <div style={{width: '20px', height: '20px'}}>
+                <div style={{width: '14px', height: '14px'}}>
                   {s.icon}
                 </div>
               </div>
               <span style={{
-                fontSize: '11px',
+                fontSize: '8px',
                 fontWeight: '700',
                 color: s.color,
                 background: `${s.color}25`,
-                padding: '4px 8px',
-                borderRadius: '6px',
+                padding: '2px 5px',
+                borderRadius: '3px',
                 border: `1px solid ${s.color}30`,
-                letterSpacing: '0.3px'
+                letterSpacing: '0.2px'
               }}>
                 {s.trend}
               </span>
             </div>
             
             <h2 style={{
-              margin: '0 0 6px 0',
-              fontSize: '32px',
+              margin: '0 0 2px 0',
+              fontSize: '20px',
               fontWeight: '700',
               color: s.color,
               lineHeight: '1',
-              textShadow: `0 2px 8px ${s.color}30`
+              textShadow: `0 1px 4px ${s.color}30`
             }}>
               {s.value}
             </h2>
             
             <p style={{
               margin: 0,
-              fontSize: '13px',
+              fontSize: '10px',
               color: '#94a3b8',
               fontWeight: '600',
-              letterSpacing: '0.3px',
-              lineHeight: '1.3'
+              letterSpacing: '0.1px',
+              lineHeight: '1.1'
             }}>
               {s.label}
             </p>
           </div>
         </div>
       ))}
-
+    </div>
     </div>
   )
 }

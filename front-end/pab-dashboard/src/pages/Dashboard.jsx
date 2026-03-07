@@ -309,7 +309,7 @@ export default function Dashboard() {
           {/* Map & Stats Row - Side by side */}
           <div className="map-stats-row" style={{ 
             display: "grid",
-            gridTemplateColumns: "1fr 1fr",
+            gridTemplateColumns: "calc(50% + 14px) calc(50% - 14px)",
             gap: "12px",
             flex: "0 0 auto",
             minHeight: "280px"
@@ -335,7 +335,7 @@ export default function Dashboard() {
           <div className="summary-contact-section" style={{ 
             flex: "1 1 auto",
             display: "grid",
-            gridTemplateColumns: "1fr 1fr",
+            gridTemplateColumns: "calc(50% + 14px) calc(50% - 14px)",
             gap: "12px",
             minHeight: "280px",
             maxHeight: "450px",
