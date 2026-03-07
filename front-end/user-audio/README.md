@@ -35,7 +35,7 @@ npm install
 
 3. Create a `.env` file in the root directory and configure your backend API URL:
 ```bash
-REACT_APP_API_URL=http://localhost:3001/api/audio
+REACT_APP_API_URL=http://localhost:3001/api/detect
 ```
 
 ## Usage
@@ -193,7 +193,7 @@ Edit `src/App.css`:
 
 Update `.env` file:
 ```bash
-REACT_APP_API_URL=https://your-backend-api.com/api/audio
+REACT_APP_API_URL=https://your-backend-api.com/api/detect
 ```
 
 ### Modify Recording Format

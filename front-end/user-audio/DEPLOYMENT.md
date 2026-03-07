@@ -59,7 +59,7 @@ Set your backend API URL in Vercel:
 2. Navigate to "Environment Variables"
 3. Add the following:
    - **Key:** `REACT_APP_API_URL`
-   - **Value:** Your backend API URL (e.g., `https://api.yourdomain.com/api/audio`)
+   - **Value:** Your backend API URL (e.g., `https://api.yourdomain.com/api/detect`)
    - **Environment:** Select Production, Preview, and Development
 
 Or use Vercel CLI:
