@@ -1,5 +1,6 @@
 import base64
 from fastapi import FastAPI, Form, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.db import get_client
 from app.schemas import HealthResponse, MessageResponse
@@ -9,6 +10,16 @@ from app.voice_info_repository import VoiceInfoRepository
 from app.utils import resolve_priority
 
 app = FastAPI(title=settings.app_name, version=settings.app_version, debug=settings.debug)
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
+
 speech_transcriber = SpeechTranscriber(settings.open_api_key)
 client = get_client()
 voice_info_repo = VoiceInfoRepository(client)
@@ -56,10 +67,10 @@ async def detect_speech(
     audio_bytes = await file.read()
     audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
 
-    transcript = await speech_transcriber.transcribe((file.filename, audio_bytes, file.content_type))
+    lang, transcript = await speech_transcriber.transcribe((file.filename, audio_bytes, file.content_type))
     scoring_config = voice_info_repo.get_scoring_config()
     priorities = voice_info_repo.get_priorities()
-    lang ,score, matching_keyword = agent_score.calculate(transcript, scoring_config)
+    score, matching_keyword = agent_score.calculate(transcript, scoring_config)
     priority = resolve_priority(priorities, score)
 
     voice_info_repo.insert(device_id, audio_base64, transcript, lang, score, priority)

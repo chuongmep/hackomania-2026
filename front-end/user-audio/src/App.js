@@ -11,7 +11,8 @@ function App() {
   const audioChunksRef = useRef([]);
 
   // API endpoint - update this with your backend URL
-  const API_ENDPOINT = process.env.REACT_APP_API_URL || 'http://localhost:3001/api/audio';
+  const API_ENDPOINT = process.env.REACT_APP_API_URL || 'https://hackit-api-111308238154.asia-southeast1.run.app/detect';
+  const DEVICE_ID = process.env.REACT_APP_DEVICE_ID || 'Q2h4VnBzTjRk44444555';
 
   const startRecording = async () => {
     try {
@@ -64,7 +65,8 @@ function App() {
   const sendAudioToBackend = async (audioBlob) => {
     try {
       const formData = new FormData();
-      formData.append('audio', audioBlob, 'recording.webm');
+      formData.append('device_id', DEVICE_ID);
+      formData.append('file', audioBlob, 'recording.webm');
 
       const response = await axios.post(API_ENDPOINT, formData, {
         headers: {
@@ -101,6 +103,7 @@ function App() {
       setStatusMessage('Sending emergency alert...');
       
       const response = await axios.post(API_ENDPOINT, {
+        device_id: DEVICE_ID,
         emergency: true,
         timestamp: new Date().toISOString(),
         type: 'silent_alert'
