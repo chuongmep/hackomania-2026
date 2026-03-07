@@ -12,7 +12,7 @@ function App() {
 
   // API endpoint - update this with your backend URL
   const API_ENDPOINT = process.env.REACT_APP_API_URL || 'https://hackit-api-111308238154.asia-southeast1.run.app/detect';
-  const DEVICE_ID = process.env.REACT_APP_DEVICE_ID || 'Q2h4VnBzTjRk44444555';
+  const DEVICE_ID = process.env.REACT_APP_DEVICE_ID || 'PAB-00083912';
 
   const startRecording = async () => {
     try {
