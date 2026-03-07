@@ -1,5 +1,4 @@
 from openai import OpenAI
-from langdetect import detect
 
 
 class SpeechTranscriber:
@@ -14,5 +13,4 @@ class SpeechTranscriber:
             response_format="text"
         )
 
-        lang = detect(transcription)
-        return lang, transcription
+        return transcription

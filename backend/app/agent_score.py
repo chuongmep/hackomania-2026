@@ -11,7 +11,14 @@ SYSTEM_PROMPT = (
     "{DATA_BASE}\n"
     "\n"
     "## Instructions\n"
-    "If the transcript is not in english, please translate it to english and compare it\n"
+    "\n"
+    "0. **Language Detection** — Detect the language of the transcript and return its "
+    "ISO 639-1 code (e.g. \"en\", \"zh\", \"ms\", \"vi\", \"ta\"). "
+    "If it is not in English, first translate the full transcript to English internally, "
+    "then perform all keyword matching and scoring against the English translation. "
+    "Match by meaning, not literal word-for-word translation "
+    '(e.g. Chinese "胸痛" should match "chest pain", Malay "sakit dada" should match "chest pain").\n'
+    "\n"
     "Analyze the transcript step by step:\n"
     "\n"
     "1. **Keyword Severity** — Scan the transcript for keywords listed in "
@@ -43,6 +50,7 @@ SYSTEM_PROMPT = (
 
 
 class RiskScore(BaseModel):
+    language: str
     score: float
     matching_keyword: list[str]
 
@@ -67,4 +75,4 @@ class AgentScore:
         )
 
         output = response.output_parsed
-        return output.score, output.matching_keyword
+        return output.language, output.score, output.matching_keyword
