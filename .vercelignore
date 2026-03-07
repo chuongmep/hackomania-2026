@@ -1,0 +1,19 @@
+# Don't upload these to Vercel
+node_modules
+.git
+backend
+docs
+.venv
+__pycache__
+*.pyc
+*.db
+*.sqlite
+.DS_Store
+.idea
+.vscode
+*.log
+
+# These will be built by Vercel
+front-end/pab-dashboard/dist
+front-end/user-audio/build
+dist-combined
