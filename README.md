@@ -71,3 +71,7 @@ Run `./deploy.sh` to build both apps into a single `dist-combined/` directory.
 ## 📝 License
 
 See [LICENSE](LICENSE) for details.
+
+This project wouldn't have been completed if not for Yan's awesome intensive contribution.
+She is so awesome!
+Awesome team as well.
