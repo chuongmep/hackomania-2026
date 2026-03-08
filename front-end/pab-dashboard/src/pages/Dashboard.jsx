@@ -1,5 +1,6 @@
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import axios from "axios"
 import AlertsPanel from "../components/AlertsPanel"
 import MapPanel from "../components/MapPanel"
 import SummaryPanel from "../components/SummaryPanel"
@@ -46,6 +47,113 @@ export default function Dashboard() {
   const [selectedAlert, setSelectedAlert] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState('');
+  const [alerts, setAlerts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [personalContacts, setPersonalContacts] = useState([]);
+
+  // Fetch alerts from API
+  useEffect(() => {
+    const fetchAlerts = async () => {
+      try {
+        const response = await axios.get('https://hackit-api-111308238154.asia-southeast1.run.app/db/voice_infos');
+        
+        if (response.data.status === 'ok' && response.data.data) {
+          // Transform API data to match component structure
+          console.log('Raw API Response:', response.data.data); // Debug log
+          const transformedAlerts = response.data.data
+            .filter(item => item.device_info !== null && item.device_info !== undefined)
+            .map((item, index) => ({
+              id: item.Id,
+              name: item.device_info?.UserName || 'Unknown User',
+              device_id: item.DeviceId,
+              age: item.device_info?.Age || 0,
+              location: item.device_info?.Address || 'Location Unknown',
+              status: item.Priority === "High" ? "Critical Alert" : item.Priority === "Medium" ? "Medical Alert" : "Low Priority",
+              risk: item.Priority,
+              time: item.time_ago || 'Unknown',
+              coordinates: [
+                item.device_info?.CoordN || 1.3521, 
+                item.device_info?.CoordE || 103.8198
+              ],
+              transcript: item.Transcript || 'No transcript available',
+              contact: item.device_info?.Contact || null,
+              email: item.device_info?.Email || null,
+              risks: item.device_info?.Risks || 'Unknown',
+              riskScore: item.RiskScore || 0,
+              language: item.Language || 'en',
+              resolved: item.Resolved || false,
+              dateTimeStamp: item.DateTimeStamp || new Date().toISOString(),
+              deviceName: item.device_info?.DeviceName || item.DeviceId,
+              triageReasoning: item.TriageReasoning || ''
+            }));
+          
+          setAlerts(transformedAlerts);
+        }
+      } catch (error) {
+        console.error('Error fetching alerts:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (isLoggedIn) {
+      fetchAlerts();
+      // Refresh data every 5 seconds
+      const interval = setInterval(fetchAlerts, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [isLoggedIn]);
+
+  // Update selected alert when alerts refresh
+  useEffect(() => {
+    if (selectedAlert && alerts.length > 0) {
+      const updatedAlert = alerts.find(alert => alert.id === selectedAlert.id);
+      if (updatedAlert) {
+        setSelectedAlert(updatedAlert);
+      }
+    }
+  }, [alerts]);
+
+  // Fetch personal contacts when alert is selected
+  useEffect(() => {
+    const fetchPersonalContacts = async () => {
+      if (selectedAlert && selectedAlert.device_id) {
+        try {
+          const response = await axios.get('https://hackit-api-111308238154.asia-southeast1.run.app/db/voice_infos');
+          console.log('Personal Contacts Response:', response.data); // Debug log
+          
+          // Check if response is an array directly or nested in data
+          const dataArray = Array.isArray(response.data) ? response.data : 
+                           (response.data.data ? response.data.data : []);
+          
+          // Filter items by device_id and extract contacts array from each item
+          const contacts = dataArray
+            .filter(item => item.DeviceId === selectedAlert.device_id)
+            .flatMap(item => item.contacts || [])
+            .map(contact => ({
+              id: contact.Id,
+              name: contact.Name,
+              relation: contact.Relationship,
+              phone: contact.PhoneNumber,
+              address: contact.Address,
+              deviceId: contact.DeviceId
+            }));
+          
+          console.log('Filtered Personal Contacts:', contacts); // Debug log
+          setPersonalContacts(contacts);
+        } catch (error) {
+          console.error('Error fetching personal contacts:', error);
+          setPersonalContacts([]);
+        }
+      } else {
+        setPersonalContacts([]);
+      }
+    };
+
+    if (isLoggedIn) {
+      fetchPersonalContacts();
+    }
+  }, [selectedAlert, isLoggedIn]);
 
   const handleLogin = (email) => {
     setIsLoggedIn(true);
@@ -90,6 +198,30 @@ export default function Dashboard() {
         @keyframes pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }
+        }
+        
+        /* Responsive Layout */
+        @media (max-width: 1400px) {
+          .dashboard-main-content {
+            grid-template-columns: 320px 1fr !important;
+          }
+        }
+        @media (max-width: 1200px) {
+          .dashboard-main-content {
+            grid-template-columns: 1fr !important;
+          }
+          .map-stats-row {
+            grid-template-columns: 1fr !important;
+          }
+          .summary-contact-section {
+            grid-template-columns: 1fr !important;
+          }
+        }
+        @media (max-width: 768px) {
+          .dashboard-header {
+            flex-wrap: wrap !important;
+            gap: 10px !important;
+          }
         }
       `}</style>
       
@@ -189,7 +321,7 @@ export default function Dashboard() {
       </div>
 
       {/* Main Content */}
-      <div style={{
+      <div className="dashboard-main-content" style={{
         flex: 1,
         display: "grid",
         gridTemplateColumns: "380px 1fr",
@@ -203,39 +335,56 @@ export default function Dashboard() {
           <AlertsPanel 
             selectedAlert={selectedAlert}
             onSelectAlert={setSelectedAlert}
+            alerts={alerts}
+            loading={loading}
           />
         </div>
 
         {/* Right Column - Map, Stats, Summary */}
-        <div style={{
+        <div className="dashboard-right-column" style={{
           display: "flex",
           flexDirection: "column",
           gap: "12px",
           minHeight: 0,
           overflow: "hidden"
         }}>
-          {/* Map Section - Takes more space */}
-          <div style={{ flex: "1 1 auto", minHeight: "300px", maxHeight: "50%", overflow: "hidden" }}>
-            <MapPanel selectedAlert={selectedAlert} />
-          </div>
+          {/* Map & Stats Row - Side by side */}
+          <div className="map-stats-row" style={{ 
+            display: "grid",
+            gridTemplateColumns: "calc(50% + 14px) calc(50% - 14px)",
+            gap: "12px",
+            flex: "0 0 auto",
+            height: "320px"
+          }}>
+            {/* Map Section - Left half */}
+            <div className="map-section" style={{ 
+              height: "100%",
+              overflow: "hidden" 
+            }}>
+              <MapPanel selectedAlert={selectedAlert} alerts={alerts} />
+            </div>
 
-          {/* Stats Section - Compact */}
-          <div style={{ flex: "0 0 auto" }}>
-            <StatCards />
+            {/* Stats Section - Right half */}
+            <div className="stats-section" style={{ 
+              height: "100%",
+              overflow: "hidden"
+            }}>
+              <StatCards alerts={alerts} />
+            </div>
           </div>
 
           {/* Summary & Contact Section - Two Columns with controlled height */}
-          <div style={{ 
+          <div className="summary-contact-section" style={{ 
             flex: "1 1 auto",
             display: "grid",
-            gridTemplateColumns: "1fr 1fr",
+            gridTemplateColumns: "calc(50% + 14px) calc(50% - 14px)",
             gap: "12px",
-            minHeight: 0,
-            maxHeight: "280px",
+            minHeight: "280px",
+            maxHeight: "450px",
             overflow: "hidden"
           }}>
             <SummaryPanel selectedAlert={selectedAlert} />
-            <ContactList selectedAlert={selectedAlert} />
+              <ContactList selectedAlert={selectedAlert} personalContacts={personalContacts} />
           </div>
         </div>
       </div>

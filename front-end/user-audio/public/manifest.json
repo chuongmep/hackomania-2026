@@ -1,0 +1,18 @@
+{
+  "short_name": "PAB Alert",
+  "name": "Personal Alert Button - Emergency Alert System",
+  "description": "Emergency alert system with voice recording",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": ".",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "theme_color": "#1e1b4b",
+  "background_color": "#1e1b4b",
+  "prefer_related_applications": false
+}

@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import axios from 'axios';
 
 // Professional User Avatar Component
 function UserAvatar({ name, color, risk }) {
@@ -89,15 +90,42 @@ function StatusBadge({ risk }) {
   );
 }
 
-export default function AlertsPanel({ selectedAlert, onSelectAlert }){
+export default function AlertsPanel({ selectedAlert, onSelectAlert, alerts = [], loading = false }){
   const [resolvedAlerts, setResolvedAlerts] = useState([]);
   const [attendedAlerts, setAttendedAlerts] = useState([]);
+  const [resolvingAlerts, setResolvingAlerts] = useState([]);
 
-  const handleDispatchToggle = (alertId) => {
+  const handleDispatchToggle = async (alert) => {
+    const alertId = alert.id;
+    const deviceId = alert.device_id;
+    
+    // Check if already resolved
     if (resolvedAlerts.includes(alertId)) {
       setResolvedAlerts(resolvedAlerts.filter(id => id !== alertId));
-    } else {
-      setResolvedAlerts([...resolvedAlerts, alertId]);
+      return;
+    }
+    
+    // Mark as resolving
+    setResolvingAlerts([...resolvingAlerts, alertId]);
+    
+    try {
+      // Call API to resolve the alert
+      const response = await axios.post(`https://hackit-api-111308238154.asia-southeast1.run.app/db/voice_info/resolve?device_id=${deviceId}`);
+      
+      if (response.data.status === 'ok') {
+        // Successfully resolved
+        setResolvedAlerts([...resolvedAlerts, alertId]);
+        console.log(`Alert ${deviceId} resolved successfully`);
+      } else {
+        console.error('Failed to resolve alert:', response.data);
+        alert('Failed to resolve alert. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error resolving alert:', error);
+      alert('Error resolving alert. Please check your connection.');
+    } finally {
+      // Remove from resolving state
+      setResolvingAlerts(resolvingAlerts.filter(id => id !== alertId));
     }
   };
 
@@ -109,47 +137,39 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
     }
   };
 
-  const alerts=[
-    {
-      id: 1,
-      name: "Mr Tan Ah Kow",
-      device_id: "PAB-00083912",
-      age: 78,
-      location: "Blk 123, Ang Mo Kio Ave 3, #05-45",
-      status: "Fall Detected",
-      risk: "High",
-      time: "2 mins ago",
-      color: "#3b82f6",
-      coordinates: [1.369115, 103.845436],
-      transcript: "Hello? Help! I've fallen in the bathroom and I can't get up. My hip hurts badly. Please send help quickly. I'm alone at home and I think I might have broken something. The pain is getting worse... I pressed my emergency button but I don't know if anyone heard me."
-    },
-    {
-      id: 2,
-      name: "Madam Lee Siew Hong",
-      device_id: "PAB-00084201",
-      age: 82,
-      location: "Blk 456, Bedok North St 2, #12-88",
-      status: "No Response",
-      risk: "Medium",
-      time: "5 mins ago",
-      color: "#8b5cf6",
-      coordinates: [1.324, 103.93],
-      transcript: "[No verbal response detected] *Sound of objects falling* *Heavy breathing* *Faint moaning* [System note: Motion sensor triggered in bedroom. No response to automated voice prompts. Last known position: near bedroom door.]"
-    },
-    {
-      id: 3,
-      name: "Mr Kumar Ramasamy",
-      device_id: "PAB-00085476",
-      age: 75,
-      location: "Blk 789, Tampines Ave 5, #08-22",
-      status: "Medical Alert",
-      risk: "High",
-      time: "1 min ago",
-      color: "#ec4899",
-      coordinates: [1.35, 103.94],
-      transcript: "I'm not feeling well... chest pain... difficulty breathing. I took my heart medication but it's not helping. Please call my daughter at 9123-4567. The pain is on my left side and going down my arm. I'm sitting down now but I feel very dizzy and nauseous."
-    }
-  ]
+  // Show loading state
+  if (loading) {
+    return(
+      <div style={{
+        background: "#1e293b",
+        padding: "15px",
+        borderRadius: "10px",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center"
+      }}>
+        <div style={{textAlign: 'center'}}>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            border: '4px solid rgba(59, 130, 246, 0.3)',
+            borderTop: '4px solid #3b82f6',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 12px'
+          }} />
+          <p style={{color: '#94a3b8', fontSize: '13px'}}>Loading alerts...</p>
+        </div>
+        <style>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    );
+  }
 
   return(
     <div style={{
@@ -165,6 +185,10 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
         @keyframes pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.6; }
+        }
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
         .alert-card {
           transition: all 0.3s ease;
@@ -232,7 +256,7 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
             <div style={{display: 'flex', gap: '12px', alignItems: 'flex-start'}}>
               {/* User Avatar */}
               <div style={{flexShrink: 0}}>
-                <UserAvatar name={alert.name} color={alert.color} risk={alert.risk} />
+                <UserAvatar name={alert.name} color="#3b82f6" risk={alert.risk} />
               </div>
               
               {/* Alert Details */}
@@ -257,16 +281,6 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
                   marginTop: '8px',
                   border: '1px solid rgba(71, 85, 105, 0.3)'
                 }}>
-                  <div style={{display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px'}}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5">
-                      <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                      <line x1="12" y1="9" x2="12" y2="13" />
-                      <line x1="12" y1="17" x2="12.01" y2="17" />
-                    </svg>
-                    <p style={{margin: 0, fontSize: '13px', fontWeight: '600', color: '#f1f5f9'}}>
-                      {alert.status}
-                    </p>
-                  </div>
                   <div style={{display: 'flex', alignItems: 'start', gap: '6px'}}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2" style={{marginTop: '2px', flexShrink: 0}}>
                       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
@@ -360,12 +374,15 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
                   <button 
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleDispatchToggle(alert.id);
+                      handleDispatchToggle(alert);
                     }}
+                    disabled={resolvingAlerts.includes(alert.id)}
                     style={{
                       flex: 1,
                       background: resolvedAlerts.includes(alert.id) 
                         ? 'linear-gradient(135deg, #64748b 0%, #475569 100%)' 
+                        : resolvingAlerts.includes(alert.id)
+                        ? 'linear-gradient(135deg, #94a3b8 0%, #64748b 100%)'
                         : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                       color: '#fff',
                       border: 'none',
@@ -373,7 +390,7 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
                       borderRadius: '6px',
                       fontSize: '11px',
                       fontWeight: '600',
-                      cursor: 'pointer',
+                      cursor: resolvingAlerts.includes(alert.id) ? 'wait' : 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -381,12 +398,20 @@ export default function AlertsPanel({ selectedAlert, onSelectAlert }){
                       boxShadow: resolvedAlerts.includes(alert.id)
                         ? '0 2px 4px rgba(100, 116, 139, 0.3)'
                         : '0 2px 4px rgba(16, 185, 129, 0.3)',
-                      transition: 'all 0.2s'
+                      transition: 'all 0.2s',
+                      opacity: resolvingAlerts.includes(alert.id) ? 0.7 : 1
                     }}
-                    onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-1px)'}
+                    onMouseOver={(e) => !resolvingAlerts.includes(alert.id) && (e.currentTarget.style.transform = 'translateY(-1px)')}
                     onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                   >
-                    {resolvedAlerts.includes(alert.id) ? (
+                    {resolvingAlerts.includes(alert.id) ? (
+                      <>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{animation: 'spin 1s linear infinite'}}>
+                          <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" />
+                        </svg>
+                        Resolving...
+                      </>
+                    ) : resolvedAlerts.includes(alert.id) ? (
                       <>
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                           <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
